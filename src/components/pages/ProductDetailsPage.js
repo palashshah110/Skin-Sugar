@@ -5,15 +5,15 @@ import { useState, useEffect } from "react";
 import { Star, Minus, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 export default function ProductDetailsPage() {
-  const { setCurrentPage, cart, setCart } = useContext(AppContext);
+  const { setCurrentPage, cart, setCart, selectedProductId } = useContext(AppContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
   // For now, using the first product as demo
   // In a real app, you'd get the product ID from URL params or context
   useEffect(() => {
-    setSelectedProduct(mockProducts[0]);
-  }, []);
+    setSelectedProduct(mockProducts.find(p => p.id === selectedProductId));
+  }, [selectedProductId]);
 
   if (!selectedProduct) {
     return <div>Loading...</div>;

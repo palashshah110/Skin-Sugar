@@ -27,13 +27,15 @@ function App() {
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   const contextValue = {
     currentPage, setCurrentPage,
     user, setUser,
     cart, setCart,
     orders, setOrders,
-    mobileMenuOpen, setMobileMenuOpen
+    mobileMenuOpen, setMobileMenuOpen,
+    selectedProductId, setSelectedProductId 
   };
 
   return (

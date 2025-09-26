@@ -3,9 +3,10 @@ import { AppContext } from "../../App";
 import { Star } from "lucide-react";
 
 export default function ProductCard({ product, category="all" }) {
-  const { setCurrentPage } = useContext(AppContext);
+  const { setCurrentPage,setSelectedProductId } = useContext(AppContext);
 
-  const viewProduct = () => {
+  const viewProduct = (id) => {
+    setSelectedProductId(id);
     setCurrentPage('product-details');
   };
 
@@ -59,7 +60,7 @@ export default function ProductCard({ product, category="all" }) {
             )}
           </div>
           <button
-            onClick={viewProduct}
+            onClick={() => viewProduct(product.id)}
             className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
           >
             View Product

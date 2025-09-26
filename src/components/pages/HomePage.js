@@ -4,6 +4,7 @@ import { AppContext } from "../../App";
 import { Award, Leaf, Shield, Truck, Star, Sparkles, Heart, User } from "lucide-react";
 import ProductCard from "../common/ProductCard";
 import SocialIcons from "../common/SocialIcons";
+import SimpleCarousel from "../common/SimpleCarousel";
 
 export default function HomePage() {
   const { setCurrentPage } = useContext(AppContext);
@@ -13,36 +14,7 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-100 via-pink-50 to-amber-100"></div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-rose-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-75"></div>
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 bg-clip-text text-transparent">
-            Pure Luxury
-            <br />
-            <span className="text-4xl md:text-6xl">Handcrafted for You</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Discover our premium collection of handcrafted herbal skincare solutions,
-            where nature meets luxury in every drop.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => setCurrentPage('products')}
-              className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-rose-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 shadow-xl"
-            >
-              Explore Collection
-            </button>
-            <button className="border-2 border-rose-300 text-rose-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-rose-50 transform hover:scale-105 transition-all duration-300">
-              Learn More
-            </button>
-          </div>
-        </div>
-      </section>
+      <SimpleCarousel/>
 
       {/* Features Section */}
       <section className="py-20 bg-white">

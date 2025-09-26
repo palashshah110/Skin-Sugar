@@ -2,10 +2,10 @@ import { useContext } from "react";
 import { AppContext } from "../../App";
 import mockProducts from "../data/mockProducts";
 import { useState, useEffect } from "react";
-import {Star, Minus, Plus} from "lucide-react";
+import { Star, Minus, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 export default function ProductDetailsPage() {
-  const { setCurrentPage, setCart } = useContext(AppContext);
+  const { setCurrentPage, cart, setCart } = useContext(AppContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
@@ -19,7 +19,17 @@ export default function ProductDetailsPage() {
     return <div>Loading...</div>;
   }
 
-
+  const buyNow = () => {
+    if (!selectedProduct.inStock) {
+      toast.error('Product is out of stock!');
+      return;
+    }
+    const existing = cart.find(item => item.id === selectedProduct.id);
+    if (!existing) {
+      addToCart();
+    }
+    setCurrentPage('cart');
+  }
   const addToCart = () => {
     setCart(prev => {
       const existing = prev.find(item => item.id === selectedProduct.id);
@@ -42,7 +52,7 @@ export default function ProductDetailsPage() {
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button 
+        <button
           onClick={() => setCurrentPage('products')}
           className="mb-6 text-rose-600 hover:text-rose-700 font-medium flex items-center"
         >
@@ -74,8 +84,8 @@ export default function ProductDetailsPage() {
                     <Star
                       key={i}
                       className={`w-5 h-5 ${i < Math.floor(selectedProduct.rating)
-                          ? 'text-yellow-400 fill-current'
-                          : 'text-gray-300'
+                        ? 'text-yellow-400 fill-current'
+                        : 'text-gray-300'
                         }`}
                     />
                   ))}
@@ -146,10 +156,7 @@ export default function ProductDetailsPage() {
                   Add to Cart
                 </button>
                 <button
-                  onClick={() => {
-                    addToCart();
-                    setCurrentPage('cart');
-                  }}
+                  onClick={buyNow}
                   disabled={!selectedProduct.inStock}
                   className="flex-1 bg-gradient-to-r from-gray-700 to-gray-900 text-white py-4 rounded-lg font-semibold hover:from-gray-800 hover:to-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >

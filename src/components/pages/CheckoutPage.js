@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../App";
-import PincodeCheck from "./PinCodeCheck";
 import toast from "react-hot-toast";
+
 export default function CheckoutPage() {
   const { cart, setCart, setOrders, setCurrentPage, user } = useContext(AppContext);
   const [shippingInfo, setShippingInfo] = useState({
@@ -20,9 +20,9 @@ export default function CheckoutPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const [shippingCost,setShippingCost] = useState(99);
+  const shippingCost = 99;
+  const isServiceable = true;
   const finalTotal = total + shippingCost;
-  const [isServiceable, setIsServiceable] = useState(true);
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
@@ -98,13 +98,14 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                <PincodeCheck
-                  value={shippingInfo.pincode}
-                  onChange={handleInputChange}
-                  onStatusChange={setIsServiceable}
-                  onShippingCostChange={setShippingCost}
-                />
-
+               <input
+                    type="text"
+                    name="pincode"
+                    required
+                    value={shippingInfo.pincode}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                  />
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input

@@ -14,7 +14,7 @@ import ContactPage from './components/pages/ContactPage';
 import Footer from './components/common/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
 import { Toaster } from 'react-hot-toast';
-
+import './App.css'
 // Context for managing app state
 export const AppContext = createContext();
 

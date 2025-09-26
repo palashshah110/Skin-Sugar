@@ -1,13 +1,15 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import mockProducts from '../data/mockProducts';
 import { AppContext } from "../../App";
-import { Award, Leaf, Shield, Truck } from "lucide-react";
+import { Award, Leaf, Shield, Truck, Star, Sparkles, Heart, User } from "lucide-react";
 import ProductCard from "../common/ProductCard";
+import SocialIcons from "../common/SocialIcons";
+
 export default function HomePage() {
   const { setCurrentPage } = useContext(AppContext);
 
   const featuredProducts = mockProducts.filter(product => product.featured);
-
+  const [selectedCategory, setSelectedCategory] = useState('all');
   return (
     <div>
       {/* Hero Section */}
@@ -73,15 +75,42 @@ export default function HomePage() {
 
       {/* Featured Products */}
       <section className="py-20 bg-gradient-to-br from-rose-50 to-pink-50">
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
             <p className="text-xl text-gray-600">Our most loved skincare essentials</p>
           </div>
-
+          <div className="flex justify-center mb-12">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-rose-100">
+              <div className="flex flex-wrap justify-center gap-2">
+                {[
+                  { id: 'all', name: 'All Products', icon: Star },
+                  { id: 'chemical-free-skincare', name: 'Chemical Free Skincare', icon: User },
+                  { id: 'aesthetic-aroma', name: 'Aesthetic Aroma', icon: Sparkles },
+                  { id: 'handmade-chocolates', name: 'Handmade Chocolates', icon: Heart }
+                ].map((category) => {
+                  const IconComponent = category.icon;
+                  return (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${selectedCategory === category.id
+                          ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg'
+                          : 'text-gray-700 hover:bg-white hover:text-rose-600 hover:shadow-md'
+                        }`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      <span>{category.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} category={selectedCategory} />
             ))}
           </div>
 
@@ -95,6 +124,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+              <SocialIcons/>
+
     </div>
   );
 }

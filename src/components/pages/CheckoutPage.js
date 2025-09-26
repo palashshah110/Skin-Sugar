@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../App";
 import PincodeCheck from "./PinCodeCheck";
+import toast from "react-hot-toast";
 export default function CheckoutPage() {
   const { cart, setCart, setOrders, setCurrentPage, user } = useContext(AppContext);
   const [shippingInfo, setShippingInfo] = useState({
@@ -26,6 +27,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (e) => {
     e.preventDefault();
     if (!user) {
+      toast.error("Please login to place an order");
       setCurrentPage('login');
       return;
     }

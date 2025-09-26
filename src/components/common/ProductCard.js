@@ -2,14 +2,16 @@ import { useContext } from "react";
 import { AppContext } from "../../App";
 import { Star } from "lucide-react";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, category="all" }) {
   const { setCurrentPage } = useContext(AppContext);
 
   const viewProduct = () => {
     setCurrentPage('product-details');
-    // You might want to pass the product ID to the details page
-    // This can be done via context or URL parameters
   };
+
+  if (category !== 'all' && product.category !== category) {
+    return null;
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:scale-105">

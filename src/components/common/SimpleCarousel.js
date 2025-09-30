@@ -76,6 +76,7 @@ const SimpleCarousel = () => {
           </button>
         </div>
       </div>
+    <div className='hidden sm:block'>
 
       {/* Left Arrow */}
       <button
@@ -92,6 +93,8 @@ const SimpleCarousel = () => {
       >
         <ChevronRight className="w-6 h-6" />
       </button>
+          </div>
+
 
       {/* Slide Indicators (optional, keep or remove) */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">

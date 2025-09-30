@@ -110,8 +110,8 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Address</h3>
                     <p className="text-rose-100">
-                      123 Beauty Street<br />
-                      Mumbai, Maharashtra 400001<br />
+                      Aravali Parisar Apartments<br />
+                      Tekri Indore Madhya Pradesh 452016<br />
                       India
                     </p>
                   </div>
@@ -125,7 +125,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Phone</h3>
-                    <p className="text-rose-100">+91 98765 43210</p>
+                    <p className="text-rose-100">+91 97527 09795</p>
                   </div>
                 </div>
 

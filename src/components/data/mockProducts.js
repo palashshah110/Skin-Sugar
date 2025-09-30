@@ -46,7 +46,7 @@ const mockProducts = [
   { id: 7, name: "Temptation Musk Body Mist", price: 899, originalPrice: 1199,
     category: "chemical-free-skincare", subcategory: "body-mists",
     rating: 4.8, reviews: 127,
-    image: "https://images.pexels.com/photos/27041091/pexels-photo-27041091.jpeg",
+    image: "https://images-static.nykaa.com/media/catalog/product/4/6/464af89667556605044.jpg",
     description: "Seductive musk fragrance for all-day freshness",
     ingredients: ["Natural Oils", "Aloe Vera"], inStock: true, featured: true },
 

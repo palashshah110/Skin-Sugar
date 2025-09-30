@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { AppContext } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const SimpleCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { setCurrentPage } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const banners = [
     {
@@ -68,10 +68,10 @@ const SimpleCarousel = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all" onClick={() => setCurrentPage('products')}>
+          <button className="bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all" onClick={() => navigate('/products')}>
             Shop Now
           </button>
-          <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/20" onClick={() => setCurrentPage('products')}>
+          <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/20" onClick={() => navigate('/products')}>
             View Offers
           </button>
         </div>

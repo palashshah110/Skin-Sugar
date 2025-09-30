@@ -62,7 +62,7 @@ export default function ProductCard({ product, category="all" }) {
             )}
           </div>
           <button
-            onClick={() => viewProduct(product.id)}
+            onClick={() => viewProduct(product._id)}
             className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
           >
             View Product

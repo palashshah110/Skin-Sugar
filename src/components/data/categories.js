@@ -1,73 +1,46 @@
-const categories = [
-  {
-    id: 'chemical-free-skincare',
-    name: 'Chemical Free Skincare',
-    subcategories: [
-      'natural-soaps',
-      'perfumed-soaps',
-      'body-wash',
-      'shower-gels',
-      'body-shimmer',
-      'body-scrub',
-      'body-mists',
-      'body-butters',
-      'lip-butters',
-      'mineral-bath-salts',
-      'facial-clays',
-      'kojic-acid-deodorising-balm',
-      'skin-tightening-cream',
-      'face-serums',
-      'beetroot-blush',
-      'facewash',
-      'shampoos',
-      'conditioners'
-    ]
-  },
-  {
-    id: 'aesthetic-aroma',
-    name: 'Aesthetic Aroma',
-    subcategories: [
-      'scented-candles',
-      'wax-melts',
-      'wax-sachets',
-      'diffuser-oils',
-      'aroma-electric-diffusers',
-      'aroma-candle-diffusers',
-      'back-smoke-flow-diffusers'
-    ]
-  },
-  {
-    id: 'handmade-chocolates',
-    name: 'Handmade Chocolates',
-    subcategories: [
-      'chocolate-bars',
-      'chocolate-bytes',
-      'dryfruit-chocolates-bytes',
-      'caramelised-almonds',
-      'butter-cashews',
-      'assorted-dried-fruits'
-    ]
+import api from "../../api";
+
+// Fetch categories and subcategories
+export const fetchCategoriesAndSubcategories = async () => {
+  try {
+    const [categoriesResponse, subcategoriesResponse] = await Promise.all([
+      api.get("/categories"),
+      api.get("/subcategories"),
+    ]);
+
+    const categories = categoriesResponse.data || [];
+    const subcategories = subcategoriesResponse.data || [];
+
+    // Attach subcategories to their categories
+    const categoriesWithSubs = categories.map(category => ({
+      ...category,
+      subcategories: subcategories
+        .filter(sub => sub.category === category._id) // assuming each subcategory has a "category" field
+        .map(sub => ({
+          id: sub._id,
+          name: sub.name,
+        })),
+    }));
+
+    return { categories: categoriesWithSubs, subcategories };
+  } catch (error) {
+    console.error("Error fetching categories/subcategories:", error);
+    return { categories: [], subcategories: [] };
   }
-];
+};
 
-// Helper function to get all subcategories for filtering
+// Helper: get all subcategories
 export const getAllSubcategories = () => {
-  return categories.flatMap(category => 
-    category.subcategories.map(sub => ({
-      id: sub,
-      name: sub.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-      category: category.id
-    }))
-  );
+  return
 };
 
-// Helper function to get subcategories for a specific category
-export const getSubcategoriesByCategory = (categoryId) => {
-  const category = categories.find(cat => cat.id === categoryId);
-  return category ? category.subcategories.map(sub => ({
-    id: sub,
-    name: sub.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-  })) : [];
+// Helper: get subcategories for a specific category
+export const getSubcategoriesByCategory = (categoryId, subcategories) => {
+  return subcategories
+    .filter(sub => sub.category === categoryId)
+    .map(sub => ({
+      id: sub._id,
+      name: sub.name,
+    }));
 };
 
-export default categories;

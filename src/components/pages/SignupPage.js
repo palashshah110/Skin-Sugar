@@ -3,6 +3,7 @@ import { AppContext } from '../../App';
 import { toast } from 'react-hot-toast';
 
 import { useNavigate } from 'react-router-dom';
+import api from '../../api';
 export default function SignupPage() {
   const { setUser } = useContext(AppContext);
   const [formData, setFormData] = useState({
@@ -20,16 +21,21 @@ export default function SignupPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    // Mock signup
-    setUser({ name: formData.name, email: formData.email });
-    navigate('/home');
-    toast.success('Signup successful!');
+    try {
+      const { data } = await api.post('/auth/register', formData);
+      setUser(data.user);
+      navigate('/profile');
+      toast.success('Signup successful!');
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast.error('Signup failed. Please try again.');
+    }
   };
 
   return (

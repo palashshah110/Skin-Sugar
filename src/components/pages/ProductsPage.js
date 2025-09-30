@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Filter, ChevronDown, ChevronUp } from "lucide-react";
-import mockProducts from "../data/mockProducts";
-import categories, { getAllSubcategories } from "../data/categories";
+import { fetchCategoriesAndSubcategories } from "../data/categories";
 import ProductCard from "../common/ProductCard";
+import api from "../../api";
+import toast from "react-hot-toast";
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -10,29 +11,62 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
 
-  const allSubcategories = getAllSubcategories();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCategoriesAndSubcategories();
+        setCategories(data.categories || []);
+        setAllSubcategories(data.subcategories || []);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        toast.error('Unable to load categories');
+      }
+    };
+    fetchData();
+  }, []);
 
   const toggleCategory = (categoryId) => {
     setExpandedCategories(prev =>
       prev.includes(categoryId)
         ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+        : [categoryId]
     );
   };
 
-  const filteredProducts = mockProducts.filter(product => {
-    const categoryMatch = selectedCategory === 'all' || product.category === selectedCategory;
-    const subcategoryMatch = selectedSubcategory === 'all' || product.subcategory === selectedSubcategory;
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get('/products');
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      toast.error('Unable to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(product => {
+    const categoryMatch = selectedCategory === 'all' || product.category?._id === selectedCategory || product.category === selectedCategory;
+    const subcategoryMatch = selectedSubcategory === 'all' || product.subcategory?._id === selectedSubcategory || product.subcategory === selectedSubcategory;
     return categoryMatch && subcategoryMatch;
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
-      case 'price-low': return a.price - b.price;
-      case 'price-high': return b.price - a.price;
-      case 'rating': return b.rating - a.rating;
-      case 'name': return a.name.localeCompare(b.name);
+      case 'price-low': return (a.price || 0) - (b.price || 0);
+      case 'price-high': return (b.price || 0) - (a.price || 0);
+      case 'rating': return (b.rating || 0) - (a.rating || 0);
+      case 'name': return (a.name || '').localeCompare(b.name || '');
       default: return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     }
   });
@@ -48,6 +82,29 @@ export default function ProductsPage() {
   const handleSubcategorySelect = (subcategoryId) => {
     setSelectedSubcategory(subcategoryId);
   };
+
+  const Loader = () => (
+    <div className="flex items-center justify-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
+    </div>
+  );
+
+  // Find category and subcategory names for display
+  const getCategoryName = (categoryId) => {
+    if (categoryId === 'all') return '';
+    const category = categories.find(cat => cat._id === categoryId);
+    return category?.name || '';
+  };
+
+  const getSubcategoryName = (subcategoryId) => {
+    if (subcategoryId === 'all') return '';
+    const subcategory = allSubcategories.find(sub => sub._id === subcategoryId);
+    return subcategory?.name || '';
+  };
+
+  if (loading && products.length === 0) {
+    return <Loader />;
+  }
 
   return (
     <div className="py-8">
@@ -89,31 +146,31 @@ export default function ProductsPage() {
 
                 {/* Main Categories */}
                 <div className="space-y-4">
-                  {categories.map((category) => (
-                    <div key={category.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                  {categories?.map((category) => (
+                    <div key={category._id} className="border border-gray-200 rounded-lg overflow-hidden">
                       <button
-                        onClick={() => toggleCategory(category.id)}
+                        onClick={() => toggleCategory(category._id)}
                         className={`w-full flex items-center justify-between p-4 font-semibold text-left transition-colors ${
-                          selectedCategory === category.id
+                          selectedCategory === category._id
                             ? 'bg-rose-50 text-rose-600'
                             : 'bg-white text-gray-700 hover:bg-gray-50'
                         }`}
                       >
                         <span>{category.name}</span>
-                        {expandedCategories.includes(category.id) ? (
+                        {expandedCategories?.includes(category._id) ? (
                           <ChevronUp className="w-4 h-4" />
                         ) : (
                           <ChevronDown className="w-4 h-4" />
                         )}
                       </button>
 
-                      {expandedCategories.includes(category.id) && (
+                      {expandedCategories?.includes(category._id) && (
                         <div className="border-t border-gray-200">
                           {/* All in Category Option */}
                           <button
-                            onClick={() => handleCategorySelect(category.id)}
+                            onClick={() => handleCategorySelect(category._id)}
                             className={`w-full text-left py-2 px-6 text-sm transition-colors ${
-                              selectedCategory === category.id && selectedSubcategory === 'all'
+                              selectedCategory === category._id && selectedSubcategory === 'all'
                                 ? 'bg-rose-100 text-rose-600 font-medium'
                                 : 'text-gray-600 hover:bg-rose-50'
                             }`}
@@ -122,22 +179,24 @@ export default function ProductsPage() {
                           </button>
 
                           {/* Subcategories */}
-                          {category.subcategories.map((subcategoryId) => {
-                            const subcategory = allSubcategories.find(sub => sub.id === subcategoryId);
+                          {category?.subcategories?.map((subcategoryId) => {
+                            const subcategory = allSubcategories.find(sub => sub._id === subcategoryId.id);
+                            if (!subcategory) return null;
+                            
                             return (
                               <button
-                                key={subcategoryId}
+                                key={subcategory._id}
                                 onClick={() => {
-                                  setSelectedCategory(category.id);
-                                  handleSubcategorySelect(subcategoryId);
+                                  setSelectedCategory(category._id);
+                                  handleSubcategorySelect(subcategory._id);
                                 }}
                                 className={`w-full text-left py-2 px-6 text-sm transition-colors border-t border-gray-100 ${
-                                  selectedSubcategory === subcategoryId
+                                  selectedSubcategory === subcategory._id
                                     ? 'bg-rose-100 text-rose-600 font-medium'
                                     : 'text-gray-600 hover:bg-rose-50'
                                 }`}
                               >
-                                {subcategory?.name || subcategoryId}
+                                {subcategory.name}
                               </button>
                             );
                           })}
@@ -174,12 +233,12 @@ export default function ProductsPage() {
                   {sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''} found
                   {selectedCategory !== 'all' && (
                     <span className="text-rose-600 font-medium">
-                      {' '}in {categories.find(cat => cat.id === selectedCategory)?.name || 'Category'}
+                      {' '}in {getCategoryName(selectedCategory)}
                     </span>
                   )}
                   {selectedSubcategory !== 'all' && (
                     <span className="text-rose-600 font-medium">
-                      {' '}› {allSubcategories.find(sub => sub.id === selectedSubcategory)?.name}
+                      {' '}› {getSubcategoryName(selectedSubcategory)}
                     </span>
                   )}
                 </p>
@@ -195,7 +254,7 @@ export default function ProductsPage() {
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product._id} product={product} />
                 ))}
               </div>
             )}

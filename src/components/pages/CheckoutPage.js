@@ -2,10 +2,12 @@ import { useContext, useState } from "react";
 import { AppContext } from "../../App";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 export default function CheckoutPage() {
   const { cart, setCart, setOrders, user } = useContext(AppContext);
   const navigate = useNavigate();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const [shippingInfo, setShippingInfo] = useState({
     address: '',
@@ -27,25 +29,87 @@ export default function CheckoutPage() {
   const isServiceable = true;
   const finalTotal = total + shippingCost;
 
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
+    
     if (!user) {
       toast.error("Please login to place an order");
       navigate('/login');
       return;
     }
-    const order = {
-      id: Date.now(),
-      items: [...cart],
-      total: finalTotal,
-      shippingInfo,
-      date: new Date().toLocaleDateString(),
-      status: 'Confirmed'
-    };
 
-    setOrders(prev => [...prev, order]);
-    setCart([]);
-    navigate('/orders');
+    // Validate shipping info
+    if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || !shippingInfo.pincode || !shippingInfo.phone) {
+      toast.error("Please fill all shipping information");
+      return;
+    }
+
+    // Validate phone number
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(shippingInfo.phone)) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return;
+    }
+
+    // Validate pincode
+    const pincodeRegex = /^\d{6}$/;
+    if (!pincodeRegex.test(shippingInfo.pincode)) {
+      toast.error("Please enter a valid 6-digit pincode");
+      return;
+    }
+
+    try {
+      setIsPlacingOrder(true);
+
+      // Prepare order data for API
+      const orderData = {
+        user: user._id || user.id, // Use _id from MongoDB or id from local storage
+        items: cart.map(item => ({
+          product: item._id || item.id, // Use _id from MongoDB or id from local storage
+          quantity: item.quantity,
+          price: item.price
+        })),
+        totalAmount: finalTotal,
+        shippingInfo: {
+          address: shippingInfo.address,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          pincode: shippingInfo.pincode,
+          phone: shippingInfo.phone
+        }
+      };
+
+      // Make API call to create order
+      const response = await api.post('/orders', orderData);
+      
+      if (response.data && response.data.order) {
+        // Success - update local state
+        const newOrder = {
+          id: response.data.order._id,
+          items: [...cart],
+          total: finalTotal,
+          shippingInfo,
+          date: new Date().toLocaleDateString(),
+          status: 'pending', // Use the status from API response
+          paymentStatus: 'pending'
+        };
+
+        setOrders(prev => [...prev, newOrder]);
+        setCart([]);
+        
+        toast.success("Order placed successfully!");
+        navigate('/orders');
+      } else {
+        throw new Error('Invalid response from server');
+      }
+
+    } catch (error) {
+      console.error('Order placement error:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to place order. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -86,6 +150,7 @@ export default function CheckoutPage() {
                     value={shippingInfo.city}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    placeholder="Enter your city"
                   />
                 </div>
 
@@ -98,17 +163,24 @@ export default function CheckoutPage() {
                     value={shippingInfo.state}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    placeholder="Enter your state"
                   />
                 </div>
 
-               <input
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
+                  <input
                     type="text"
                     name="pincode"
                     required
                     value={shippingInfo.pincode}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    placeholder="6-digit pincode"
+                    maxLength="6"
                   />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input
@@ -118,6 +190,8 @@ export default function CheckoutPage() {
                     value={shippingInfo.phone}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    placeholder="10-digit phone number"
+                    maxLength="10"
                   />
                 </div>
               </div>
@@ -130,7 +204,7 @@ export default function CheckoutPage() {
 
               <div className="space-y-4 mb-6">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-3">
+                  <div key={item.id || item._id} className="flex items-center space-x-3">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -152,20 +226,38 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shipping</span>
-                  <span>{shippingCost === -1 ? 'N/A' : (shippingCost === 0 ? 'Free' : `₹${shippingCost}`)}</span>
+                  <span>{shippingCost === 0 ? 'Free' : `₹${shippingCost}`}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-3">
                   <span>Total</span>
-                  <span>{isServiceable ? `₹${finalTotal}` : "Not Serviceable"}</span>
+                  <span>₹{finalTotal}</span>
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full mt-6 bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+                disabled={isPlacingOrder || !isServiceable}
+                className={`w-full mt-6 bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-semibold transition-all duration-300 ${
+                  isPlacingOrder || !isServiceable
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:from-rose-600 hover:to-pink-600'
+                }`}
               >
-                Place Order
+                {isPlacingOrder ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Placing Order...
+                  </div>
+                ) : (
+                  'Place Order'
+                )}
               </button>
+
+              {!isServiceable && (
+                <p className="text-red-500 text-sm mt-2 text-center">
+                  Sorry, we don't deliver to your area yet.
+                </p>
+              )}
             </div>
           </div>
         </form>

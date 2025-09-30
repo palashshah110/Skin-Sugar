@@ -1,24 +1,40 @@
 import { useContext } from "react";
 import { AppContext } from "../../App";
-import mockProducts from "../data/mockProducts";
 import { useState, useEffect } from "react";
 import { Star, Minus, Plus } from "lucide-react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../../api";
 export default function ProductDetailsPage() {
   const { cart, setCart, selectedProductId } = useContext(AppContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
+  const location = useParams();
 
   // For now, using the first product as demo
   // In a real app, you'd get the product ID from URL params or context
+  const fetchProductsById = async (id) => {
+    try {
+      const { data } = await api.get(`/products/${id}`);
+      setSelectedProduct(data);
+    } catch (error) {
+      console.error('Failed to fetch product details:', error);
+      toast.error('Unable to load product details');
+    }
+  };
   useEffect(() => {
-    setSelectedProduct(mockProducts.find(p => p.id === selectedProductId));
-  }, [selectedProductId]);
+    fetchProductsById(location.id);
+  }, [selectedProductId, location.id]);
 
+  const Loader = () => (
+    <div className="flex items-center justify-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
+    </div>
+  );
+  
   if (!selectedProduct) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
   const buyNow = () => {
     if (!selectedProduct.inStock) {

@@ -2,18 +2,30 @@ import { useContext, useState } from 'react';
 import { AppContext } from '../../App';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api';
 export default function LoginPage() {
   const { setUser } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock login
-    setUser({ name: 'John Doe', email });
-    navigate('/home');
-    toast.success('Login successful!');
+    try {
+      const { data } = await api.post('/auth/login', { email, password });
+      setUser(data.user);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      if(data.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/profile');
+      }
+      toast.success('Login successful!');
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Login failed. Please check your credentials.');
+    }
   };
 
   return (

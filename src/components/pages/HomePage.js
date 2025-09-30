@@ -1,15 +1,103 @@
-import { useState } from "react";
-import mockProducts from '../data/mockProducts';
+import { useState, useEffect } from "react";
 import { Award, Leaf, Shield, Truck, Star, Sparkles, Heart, User } from "lucide-react";
 import ProductCard from "../common/ProductCard";
 import SocialIcons from "../common/SocialIcons";
 import SimpleCarousel from "../common/SimpleCarousel";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 export default function HomePage() {
-  const featuredProducts = mockProducts.filter(product => product.featured);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const navigate = useNavigate();
+
+  // Fetch featured products and categories
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch featured products
+        const productsResponse = await api.get("/products", {
+          params: {
+            featured: 'true'
+          }
+        });
+        
+        // Fetch categories
+        const categoriesResponse = await api.get("/categories");
+        setFeaturedProducts(productsResponse.data || []);
+        setCategories(categoriesResponse.data || []);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Error fetching data');
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Create category options including "All Products"
+  const categoryOptions = [
+    { _id: 'all', name: 'All Products', icon: Star }
+  ];
+
+  // Map API categories to the format needed for the UI
+  categories.forEach(category => {
+    // You can customize the icon mapping based on category name or other properties
+    let icon = User; // default icon
+    
+    if (category.name.toLowerCase().includes('chemical')) icon = User;
+    else if (category.name.toLowerCase().includes('aroma')) icon = Sparkles;
+    else if (category.name.toLowerCase().includes('chocolate')) icon = Heart;
+    
+    categoryOptions.push({
+      _id: category._id,
+      name: category.name,
+      icon: icon
+    });
+  });
+
+  // Filter products based on selected category
+  const filteredProducts = selectedCategory === 'all' 
+    ? featuredProducts 
+    : featuredProducts.filter(product => 
+        product.category?._id === selectedCategory ||
+        product.subcategory?._id === selectedCategory
+      );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading featured products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center text-red-500">
+          <p>Error: {error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Hero Section */}
@@ -46,30 +134,26 @@ export default function HomePage() {
 
       {/* Featured Products */}
       <section className="py-20 bg-gradient-to-br from-rose-50 to-pink-50">
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Products</h2>
             <p className="text-xl text-gray-600">Our most loved skincare essentials</p>
           </div>
+          
           <div className="flex justify-center mb-12">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-rose-100">
               <div className="flex flex-wrap justify-center gap-2">
-                {[
-                  { id: 'all', name: 'All Products', icon: Star },
-                  { id: 'chemical-free-skincare', name: 'Chemical Free Skincare', icon: User },
-                  { id: 'aesthetic-aroma', name: 'Aesthetic Aroma', icon: Sparkles },
-                  { id: 'handmade-chocolates', name: 'Handmade Chocolates', icon: Heart }
-                ].map((category) => {
+                {categoryOptions.map((category) => {
                   const IconComponent = category.icon;
                   return (
                     <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${selectedCategory === category.id
+                      key={category._id}
+                      onClick={() => setSelectedCategory(category._id)}
+                      className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                        selectedCategory === category._id
                           ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg'
                           : 'text-gray-700 hover:bg-white hover:text-rose-600 hover:shadow-md'
-                        }`}
+                      }`}
                     >
                       <IconComponent className="w-5 h-5" />
                       <span>{category.name}</span>
@@ -79,11 +163,18 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} category={selectedCategory} />
-            ))}
-          </div>
+
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No featured products found in this category.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <button
@@ -95,8 +186,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-              <SocialIcons/>
-
+      
+      <SocialIcons/>
     </div>
   );
 }

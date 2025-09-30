@@ -1,11 +1,11 @@
-import { useContext, useEffect } from "react";
-import { AppContext } from "../../App";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function ScrollToTop() {
-  const { currentPage } = useContext(AppContext);
+  const location = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [currentPage]);
+  }, [location.pathname]);
 
   return null;
 }

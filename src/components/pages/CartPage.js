@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../../App';
 import { ShoppingCart, Minus, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-  const { cart, setCart, setCurrentPage } = useContext(AppContext);
+  const { cart, setCart } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const updateQuantity = (id, newQuantity) => {
     if (newQuantity === 0) {
@@ -26,7 +28,8 @@ export default function CartPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
           <p className="text-gray-600 mb-8">Add some products to get started!</p>
           <button
-            onClick={() => setCurrentPage('products')}
+            onClick={() => navigate('/products')}
+
             className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
           >
             Shop Now
@@ -104,7 +107,7 @@ export default function CartPage() {
                   <span className="font-medium">₹{total}</span>
                 </div>
               <button
-                onClick={() => setCurrentPage('checkout')}
+                onClick={() => navigate('/checkout')}
                 className="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
               >
                 Proceed to Checkout

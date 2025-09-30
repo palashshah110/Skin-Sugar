@@ -1,9 +1,8 @@
-import { useContext } from "react";
-import { AppContext } from "../../App";
 import { Facebook, Instagram, Leaf } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
-  const { setCurrentPage } = useContext(AppContext);
+  const navigate = useNavigate();
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -33,7 +32,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <button
-                  onClick={() => setCurrentPage('home')}
+                  onClick={() => navigate('/')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Home
@@ -41,7 +40,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('products')}
+                  onClick={() => navigate('/products')}     
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Products
@@ -49,7 +48,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('faq')}
+                  onClick={() => navigate('/faq')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   FAQ
@@ -57,7 +56,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('contact')}
+                  onClick={() => navigate('/contact')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Contact
@@ -71,7 +70,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <button
-                  onClick={() => setCurrentPage('products')}
+                  onClick={() => navigate('/products/face-care')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Face Care
@@ -79,7 +78,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('products')}
+                  onClick={() => navigate('/products/body-care')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Body Care
@@ -87,7 +86,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('products')}
+                  onClick={() => navigate('/products/lip-care')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Lip Care
@@ -95,7 +94,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('products')}
+                  onClick={() => navigate('/products/hair-care')}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Hair Care

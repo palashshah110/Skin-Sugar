@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import { AppContext } from "../../App";
 import { Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCard({ product, category="all" }) {
-  const { setCurrentPage,setSelectedProductId } = useContext(AppContext);
+  const { setSelectedProductId } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const viewProduct = (id) => {
     setSelectedProductId(id);
-    setCurrentPage('product-details');
+    navigate(`/products/${id}`);
   };
 
   if (category !== 'all' && product.category !== category) {

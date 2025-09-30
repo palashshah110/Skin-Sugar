@@ -1,9 +1,12 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../App";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
-  const { cart, setCart, setOrders, setCurrentPage, user } = useContext(AppContext);
+  const { cart, setCart, setOrders, user } = useContext(AppContext);
+  const navigate = useNavigate();
+
   const [shippingInfo, setShippingInfo] = useState({
     address: '',
     city: '',
@@ -28,7 +31,7 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (!user) {
       toast.error("Please login to place an order");
-      setCurrentPage('login');
+      navigate('/login');
       return;
     }
     const order = {
@@ -42,11 +45,11 @@ export default function CheckoutPage() {
 
     setOrders(prev => [...prev, order]);
     setCart([]);
-    setCurrentPage('orders');
+    navigate('/orders');
   };
 
   if (cart.length === 0) {
-    setCurrentPage('cart');
+    navigate('/cart');
     return null;
   }
 

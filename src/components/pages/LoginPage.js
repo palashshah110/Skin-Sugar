@@ -1,16 +1,18 @@
 import { useContext, useState } from 'react';
 import { AppContext } from '../../App';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 export default function LoginPage() {
-  const { setCurrentPage, setUser } = useContext(AppContext);
+  const { setUser } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Mock login
     setUser({ name: 'John Doe', email });
-    setCurrentPage('home');
+    navigate('/home');
     toast.success('Login successful!');
   };
 
@@ -59,7 +61,7 @@ export default function LoginPage() {
             <p className="text-gray-600">
               Don't have an account?{' '}
               <button
-                onClick={() => setCurrentPage('signup')}
+                onClick={() => navigate('/signup')}
                 className="text-rose-600 font-medium hover:text-rose-700"
               >
                 Sign up

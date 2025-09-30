@@ -1,12 +1,16 @@
 import { useContext } from "react";
 import { AppContext } from "../../App";
 import { Leaf, Search, ShoppingCart, User, X, Menu } from "lucide-react";
+import { useNavigate,useLocation } from "react-router-dom";
 
 export default function Header() {
-  const { currentPage, setCurrentPage, user, cart, mobileMenuOpen, setMobileMenuOpen } = useContext(AppContext);
+  const { user, cart, mobileMenuOpen, setMobileMenuOpen } = useContext(AppContext);
+  const navigate = useNavigate();
+  const history = useLocation();
+  const currentRoute = history.pathname;
 
-  const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const menuItem = [{name:'home',route:"/"}, {name:'products', route:"/products"}, {name:'faq', route:"/faq"}, {name:'contact', route:"/contact"}];
   return (
     <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-rose-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,7 +18,7 @@ export default function Header() {
           {/* Logo */}
           <div
             className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setCurrentPage('home')}
+            onClick={() => navigate('/')}
           >
             <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-2 rounded-full">
               <Leaf className="w-6 h-6 text-white" />
@@ -26,16 +30,19 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {['home', 'products', 'faq', 'contact'].map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentPage === page ? 'text-rose-600' : 'text-gray-700'
-                  }`}
-              >
-                {page === 'faq' ? 'FAQ' : page}
-              </button>
-            ))}
+            {menuItem.map((page) => (
+                <button
+                  key={page.name}
+                  onClick={() => {
+                    navigate(page.route);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`text-left text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentRoute === page.route ? 'text-rose-600' : 'text-gray-700'
+                    }`}
+                >
+                  {page.name}
+                </button>
+              ))}
           </nav>
 
           {/* Actions */}
@@ -46,14 +53,14 @@ export default function Header() {
 
             {user ? (
               <button
-                onClick={() => setCurrentPage('profile')}
+                onClick={() => navigate('/profile')}
                 className="p-2 hover:bg-rose-50 rounded-full transition-colors"
               >
                 <User className="w-5 h-5 text-gray-600" />
               </button>
             ) : (
               <button
-                onClick={() => setCurrentPage('login')}
+                onClick={() => navigate('/login')}
                 className="text-sm font-medium text-gray-700 hover:text-rose-600 transition-colors"
               >
                 Login
@@ -61,13 +68,13 @@ export default function Header() {
             )}
 
             <button
-              onClick={() => setCurrentPage('cart')}
+              onClick={() => navigate('/cart')} 
               className="relative p-2 hover:bg-rose-50 rounded-full transition-colors"
             >
               <ShoppingCart className="w-5 h-5 text-gray-600" />
-              {cartItemsCount > 0 && (
+              {cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItemsCount}
+                  {cartItemCount}
                 </span>
               )}
             </button>
@@ -85,17 +92,17 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-rose-100 py-4">
             <nav className="flex flex-col space-y-3">
-              {['home', 'products', 'faq', 'contact'].map((page) => (
+              {menuItem.map((page) => (
                 <button
-                  key={page}
+                  key={page.name}
                   onClick={() => {
-                    setCurrentPage(page);
+                    navigate(page.route);
                     setMobileMenuOpen(false);
                   }}
-                  className={`text-left text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentPage === page ? 'text-rose-600' : 'text-gray-700'
+                  className={`text-left text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentRoute === page.route ? 'text-rose-600' : 'text-gray-700'
                     }`}
                 >
-                  {page === 'faq' ? 'FAQ' : page}
+                  {page.name}
                 </button>
               ))}
             </nav>

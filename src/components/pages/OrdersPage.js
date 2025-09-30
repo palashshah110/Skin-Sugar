@@ -1,12 +1,14 @@
 import { useContext } from 'react';
 import { AppContext } from '../../App';
 import { Truck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrdersPage() {
-  const { orders, user, setCurrentPage } = useContext(AppContext);
+  const { orders, user } = useContext(AppContext);
+  const navigate = useNavigate();
 
   if (!user) {
-    setCurrentPage('login');
+    navigate('/login');
     return null;
   }
 
@@ -20,7 +22,7 @@ export default function OrdersPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">No orders yet</h2>
           <p className="text-gray-600 mb-8">Start shopping to see your orders here!</p>
           <button
-            onClick={() => setCurrentPage('products')}
+            onClick={() => navigate('/products')}
             className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
           >
             Shop Now

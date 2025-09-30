@@ -4,10 +4,12 @@ import mockProducts from "../data/mockProducts";
 import { useState, useEffect } from "react";
 import { Star, Minus, Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 export default function ProductDetailsPage() {
-  const { setCurrentPage, cart, setCart, selectedProductId } = useContext(AppContext);
+  const { cart, setCart, selectedProductId } = useContext(AppContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   // For now, using the first product as demo
   // In a real app, you'd get the product ID from URL params or context
@@ -18,7 +20,6 @@ export default function ProductDetailsPage() {
   if (!selectedProduct) {
     return <div>Loading...</div>;
   }
-
   const buyNow = () => {
     if (!selectedProduct.inStock) {
       toast.error('Product is out of stock!');
@@ -28,7 +29,7 @@ export default function ProductDetailsPage() {
     if (!existing) {
       addToCart();
     }
-    setCurrentPage('cart');
+    navigate('/cart');
   }
   const addToCart = () => {
     setCart(prev => {
@@ -53,7 +54,7 @@ export default function ProductDetailsPage() {
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
-          onClick={() => setCurrentPage('products')}
+          onClick={() => navigate('/products')}
           className="mb-6 text-rose-600 hover:text-rose-700 font-medium flex items-center"
         >
           ← Back to Products

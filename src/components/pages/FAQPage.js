@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
-import { AppContext } from "../../App";
+import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 export default function FAQPage() {
-  const { setCurrentPage } = useContext(AppContext);
+  const navigate = useNavigate();
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
@@ -65,7 +65,7 @@ export default function FAQPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
           <p className="text-gray-600 mb-6">Our customer support team is here to help you</p>
           <button
-            onClick={() => setCurrentPage('contact')}
+            onClick={() => navigate('/contact')}
             className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
           >
             Contact Us

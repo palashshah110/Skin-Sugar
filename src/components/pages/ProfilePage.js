@@ -1,17 +1,19 @@
 import { useContext } from "react";
 import { AppContext } from "../../App";
 import { User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
-  const { user, setCurrentPage, setUser } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
+  const navigate = useNavigate();
 
   if (!user) {
-    setCurrentPage('login');
+    navigate('/login');
     return null;
   }
 
   const handleLogout = () => {
     setUser(null);
-    setCurrentPage('home');
+    navigate('/home');
   };
 
   return (
@@ -60,14 +62,14 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
                 <div className="space-y-3">
                   <button
-                    onClick={() => setCurrentPage('orders')}
+                    onClick={() => navigate('/orders')}
                     className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-rose-50 hover:border-rose-200 transition-colors"
                   >
                     <div className="font-medium text-gray-900">My Orders</div>
                     <div className="text-sm text-gray-600">View your order history</div>
                   </button>
                   <button
-                    onClick={() => setCurrentPage('cart')}
+                    onClick={() => navigate('/cart')}
                     className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-rose-50 hover:border-rose-200 transition-colors"
                   >
                     <div className="font-medium text-gray-900">Shopping Cart</div>

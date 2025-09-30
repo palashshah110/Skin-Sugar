@@ -1,16 +1,15 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import mockProducts from '../data/mockProducts';
-import { AppContext } from "../../App";
 import { Award, Leaf, Shield, Truck, Star, Sparkles, Heart, User } from "lucide-react";
 import ProductCard from "../common/ProductCard";
 import SocialIcons from "../common/SocialIcons";
 import SimpleCarousel from "../common/SimpleCarousel";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
-  const { setCurrentPage } = useContext(AppContext);
-
   const featuredProducts = mockProducts.filter(product => product.featured);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const navigate = useNavigate();
   return (
     <div>
       {/* Hero Section */}
@@ -88,7 +87,7 @@ export default function HomePage() {
 
           <div className="text-center mt-12">
             <button
-              onClick={() => setCurrentPage('products')}
+              onClick={() => navigate('/products')}
               className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300"
             >
               View All Products

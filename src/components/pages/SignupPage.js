@@ -2,14 +2,16 @@ import { useContext, useState } from 'react';
 import { AppContext } from '../../App';
 import { toast } from 'react-hot-toast';
 
+import { useNavigate } from 'react-router-dom';
 export default function SignupPage() {
-  const { setCurrentPage, setUser } = useContext(AppContext);
+  const { setUser } = useContext(AppContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -26,7 +28,7 @@ export default function SignupPage() {
     }
     // Mock signup
     setUser({ name: formData.name, email: formData.email });
-    setCurrentPage('home');
+    navigate('/home');
     toast.success('Signup successful!');
   };
 
@@ -103,7 +105,7 @@ export default function SignupPage() {
             <p className="text-gray-600">
               Already have an account?{' '}
               <button
-                onClick={() => setCurrentPage('login')}
+                onClick={() => navigate('/login')}
                 className="text-rose-600 font-medium hover:text-rose-700"
               >
                 Sign in

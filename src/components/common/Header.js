@@ -22,7 +22,7 @@ export default function Header() {
     navigate("/login");
   };
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const menuItem = [{ name: 'home', route: "/" }, { name: 'products', route: "/products" }, { name: 'faq', route: "/faq" }, { name: 'contact', route: "/contact" }];
+  const menuItem = [{ name: 'home', route: "/" }, { name: 'products', route: "/products" }, {name: 'custom gift', route:"/customizebasket"} , { name: 'faq', route: "/faq" }, { name: 'contact', route: "/contact" }];
   return (
     <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-rose-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,7 +113,7 @@ export default function Header() {
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-rose-50"
+                      className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-rose-50 absoulate"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>

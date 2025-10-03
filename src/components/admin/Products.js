@@ -207,7 +207,7 @@ const fetchProducts = useCallback(async (page = 1, limit = pageSize) => {
     }
   };
 
-  const removeIngredient = (index) => {
+const removeIngredient = (index) => {
     const updatedIngredients = formData.ingredients.filter((_, i) => i !== index);
     setFormData({ ...formData, ingredients: updatedIngredients });
   };

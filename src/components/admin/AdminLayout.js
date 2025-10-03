@@ -39,9 +39,8 @@ const AdminLayout = () => {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex items-center justify-between h-16 px-4 bg-gray-800">
           <h1 className="text-xl font-bold text-white">Skin Sugars Admin</h1>
@@ -63,20 +62,16 @@ const AdminLayout = () => {
                   navigate(item.path);
                   setSidebarOpen(false);
                 }}
-                className={`flex items-center w-full px-4 py-3 mb-2 text-left rounded-lg transition-all duration-200 ${
-                  isActive(item.path)
-                    ? 'bg-rose-600 text-white shadow-lg'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                }`}
+                className={`flex items-center w-full px-4 py-3 mb-2 text-left rounded-lg transition-all duration-200 ${isActive(item.path)
+                  ? 'bg-rose-600 text-white shadow-lg'
+                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }`}
               >
                 <Icon className="w-5 h-5 mr-3" />
                 <span className="font-medium">{item.label}</span>
               </button>
             );
           })}
-        </nav>
-
-        <div className="absolute bottom-4 left-4 right-4">
           <button
             onClick={handleLogout}
             className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors"
@@ -84,7 +79,8 @@ const AdminLayout = () => {
             <LogOut className="w-5 h-5 mr-3" />
             <span className="font-medium">Logout</span>
           </button>
-        </div>
+        </nav>
+
       </div>
 
       {/* Main Content */}

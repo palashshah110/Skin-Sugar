@@ -49,7 +49,7 @@ export default function FAQPage() {
               >
                 <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
                 <div className={`transform transition-transform ${openIndex === index ? 'rotate-45' : ''}`}>
-                  <Plus className="w-5 h-5 text-rose-500" />
+                  <Plus className="w-5 h-5 text-green-500" />
                 </div>
               </button>
               {openIndex === index && (
@@ -60,13 +60,12 @@ export default function FAQPage() {
             </div>
           ))}
         </div>
-
-        <div className="mt-12 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl p-8 text-center">
+        <div className="mt-12 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-8 text-center border-rad-2xl shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
           <p className="text-gray-600 mb-6">Our customer support team is here to help you</p>
           <button
             onClick={() => navigate('/contact')}
-            className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
           >
             Contact Us
           </button>

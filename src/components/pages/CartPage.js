@@ -30,7 +30,7 @@ export default function CartPage() {
           <button
             onClick={() => navigate('/products')}
 
-            className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
           >
             Shop Now
           </button>
@@ -108,7 +108,7 @@ export default function CartPage() {
                 </div>
               <button
                 onClick={() => navigate('/checkout')}
-                className="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
               >
                 Proceed to Checkout
               </button>

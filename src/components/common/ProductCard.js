@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, Star, Plus, Minus, ShoppingCart } from 'lucide-react';
+import { Gift, Star, Plus, Minus, ShoppingCart, Leaf } from 'lucide-react';
 import { AppContext } from "../../App";
 
 function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketButton = false, basketItems = [], currentBasket = 1 }) {
@@ -111,21 +111,21 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
   const renderCartControls = () => {
     if (quantityInCart > 0) {
       return (
-        <div className="flex-1 flex items-center justify-between bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+        <div className="flex-1 flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
           <button
             onClick={decreaseQuantity}
-            className="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors"
+            className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors"
           >
             <Minus className="w-3 h-3" />
           </button>
           
-          <span className="text-rose-700 font-bold text-sm">
+          <span className="text-green-700 font-bold text-sm">
             {quantityInCart}
           </span>
           
           <button
             onClick={increaseQuantity}
-            className="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors"
+            className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors"
           >
             <Plus className="w-3 h-3" />
           </button>
@@ -136,10 +136,10 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
         <button
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className="flex-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:from-rose-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center space-x-1"
+          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center space-x-1"
         >
           <ShoppingCart className="w-4 h-4" />
-          <span>Add to Cart</span>
+          <span>Cart</span>
         </button>
       );
     }
@@ -148,21 +148,21 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
   const renderBasketControls = () => {
     if (quantityInBasket > 0) {
       return (
-        <div className="flex-1 flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+        <div className="flex-1 flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
           <button
             onClick={decreaseBasketQuantity}
-            className="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600 transition-colors"
+            className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
           >
             <Minus className="w-3 h-3" />
           </button>
           
-          <span className="text-purple-700 font-bold text-sm">
+          <span className="text-emerald-700 font-bold text-sm">
             {quantityInBasket}
           </span>
           
           <button
             onClick={increaseBasketQuantity}
-            className="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600 transition-colors"
+            className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
           >
             <Plus className="w-3 h-3" />
           </button>
@@ -173,7 +173,7 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
         <button
           onClick={handleAddToBasket}
           disabled={!product.inStock}
-          className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center space-x-1"
+          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center space-x-1"
         >
           <Gift className="w-4 h-4" />
           <span>Add to Basket</span>
@@ -183,13 +183,20 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-green-100">
       <div className="relative">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-48 object-cover"
         />
+        
+        {/* Natural Product Badge */}
+        <div className="absolute top-2 left-2 bg-green-500 text-white rounded-full px-2 py-1 text-xs font-medium flex items-center space-x-1">
+          <Leaf className="w-3 h-3" />
+          <span>Natural</span>
+        </div>
+        
         {!product.inStock && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-900">
@@ -200,14 +207,14 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
         
         {/* Cart Quantity Badge */}
         {quantityInCart > 0 && (
-          <div className="absolute top-2 right-2 bg-rose-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+          <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
             {quantityInCart}
           </div>
         )}
         
         {/* Basket Quantity Badge */}
         {showBasketButton && quantityInBasket > 0 && (
-          <div className="absolute top-2 left-2 bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
+          <div className="absolute top-10 right-2 bg-emerald-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
             {quantityInBasket}
           </div>
         )}
@@ -216,6 +223,28 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
       <div className="p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h3>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+        
+        {/* Ingredients Preview */}
+        {product.ingredients && product.ingredients.length > 0 && (
+          <div className="mb-3">
+            <p className="text-xs text-green-600 font-medium mb-1">Key Ingredients:</p>
+            <div className="flex flex-wrap gap-1">
+              {product.ingredients.slice(0, 2).map((ingredient, index) => (
+                <span 
+                  key={index}
+                  className="bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs border border-green-200"
+                >
+                  {ingredient}
+                </span>
+              ))}
+              {product.ingredients.length > 2 && (
+                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+                  +{product.ingredients.length - 2} more
+                </span>
+              )}
+            </div>
+          </div>
+        )}
         
         <div className="flex items-center mb-3">
           <div className="flex items-center">
@@ -241,6 +270,11 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
             {product.originalPrice > product.price && (
               <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
             )}
+            {product.originalPrice > product.price && (
+              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
+                Save ₹{product.originalPrice - product.price}
+              </span>
+            )}
           </div>
         </div>
 
@@ -249,7 +283,7 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
           {!showBasketButton && (
             <button
               onClick={viewProduct}
-              className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+              className="flex-1 bg-green-50 text-green-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors border border-green-200"
             >
               View Details
             </button>
@@ -257,6 +291,7 @@ function ProductCard({ product, onAddToBasket, onRemoveFromBasket, showBasketBut
           
           {showBasketButton ? renderBasketControls() : renderCartControls()}
         </div>
+
       </div>
     </div>
   );

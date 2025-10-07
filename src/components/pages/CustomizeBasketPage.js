@@ -53,7 +53,6 @@ export default function CustomizeBasket() {
       setProducts(data || []);
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      toast.error('Unable to load products');
     } finally {
       setLoading(false);
     }
@@ -103,37 +102,37 @@ export default function CustomizeBasket() {
       return itemId === productId;
     });
     if (existingProduct) {
-    if (currentBasketItems.length >= MAX_ITEMS_PER_BASKET || productLength >= MAX_ITEMS_PER_BASKET) {
-      const result = await Swal.fire({
-        title: 'Basket Full!',
-        html: `This gift basket can only contain ${MAX_ITEMS_PER_BASKET} products. <br><br>Do you want to start a new basket?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ec4899',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Start New Basket',
-        cancelButtonText: 'Cancel'
-      });
-
-      if (result.isConfirmed) {
-        // Start new basket
-        const newBasketNumber = Math.max(...getUniqueBaskets()) + 1;
-        setCurrentBasket(newBasketNumber);
-        setBasketItems(prev => [...prev, {
-          ...product,
-          basketNumber: newBasketNumber,
-          quantity: 1
-        }]);
-
-        Swal.fire({
-          title: 'New Basket Created!',
-          text: `You are now customizing Basket #${newBasketNumber}`,
-          icon: 'success',
-          confirmButtonColor: '#ec4899'
+      if (currentBasketItems.length >= MAX_ITEMS_PER_BASKET || productLength >= MAX_ITEMS_PER_BASKET) {
+        const result = await Swal.fire({
+          title: 'Basket Full!',
+          html: `This gift basket can only contain ${MAX_ITEMS_PER_BASKET} products. <br><br>Do you want to start a new basket?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ec4899',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: 'Start New Basket',
+          cancelButtonText: 'Cancel'
         });
+
+        if (result.isConfirmed) {
+          // Start new basket
+          const newBasketNumber = Math.max(...getUniqueBaskets()) + 1;
+          setCurrentBasket(newBasketNumber);
+          setBasketItems(prev => [...prev, {
+            ...product,
+            basketNumber: newBasketNumber,
+            quantity: 1
+          }]);
+
+          Swal.fire({
+            title: 'New Basket Created!',
+            text: `You are now customizing Basket #${newBasketNumber}`,
+            icon: 'success',
+            confirmButtonColor: '#ec4899'
+          });
+        }
+        return;
       }
-      return;
-    }
       // Increase quantity of existing product
       setBasketItems(prev =>
         prev.map(item => {
@@ -242,7 +241,7 @@ export default function CustomizeBasket() {
   };
   const navigate = useNavigate()
   const proceedToCheckout = () => {
-      if (!user) {
+    if (!user) {
       toast.error("Please login to place an order");
       navigate('/login');
       return;
@@ -306,7 +305,7 @@ export default function CustomizeBasket() {
 
   const Loader = () => (
     <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
     </div>
   );
 
@@ -333,13 +332,13 @@ export default function CustomizeBasket() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Customize Gift Basket</h1>
-          <p className="text-xl text-gray-600">Create your perfect gift basket with our premium products</p>
-          <div className="mt-4 p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg border border-rose-200">
+          <p className="text-xl text-gray-600">Create your perfect gift basket with our premium herbal products</p>
+          <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
             <div className="flex items-center space-x-3">
-              <Gift className="w-6 h-6 text-rose-600" />
+              <Gift className="w-6 h-6 text-green-600" />
               <div>
-                <p className="text-rose-800 font-semibold">₹{BASKET_PRICE} Basket + Your Choice of Products</p>
-                <p className="text-rose-700 text-sm">Each basket can contain up to {MAX_ITEMS_PER_BASKET} products</p>
+                <p className="text-green-800 font-semibold">₹{BASKET_PRICE} Basket + Your Choice of Products</p>
+                <p className="text-green-700 text-sm">Each basket can contain up to {MAX_ITEMS_PER_BASKET} products</p>
               </div>
             </div>
           </div>
@@ -348,12 +347,12 @@ export default function CustomizeBasket() {
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24 border border-green-100">
               <div className="flex items-center justify-between mb-6 lg:hidden">
                 <h3 className="text-lg font-semibold">Filters</h3>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="p-2 hover:bg-rose-50 rounded-lg transition-colors"
+                  className="p-2 hover:bg-green-50 rounded-lg transition-colors"
                 >
                   <Filter className="w-5 h-5" />
                 </button>
@@ -361,22 +360,22 @@ export default function CustomizeBasket() {
 
               <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
                 {/* Basket Summary */}
-                <div className="mb-6 p-4 bg-rose-50 rounded-lg border border-rose-200">
-                  <h4 className="font-semibold text-rose-900 mb-3 flex items-center">
+                <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-900 mb-3 flex items-center">
                     <Gift className="w-4 h-4 mr-2" />
                     Your Gift Baskets
                   </h4>
 
                   {getUniqueBaskets().map(basketNum => (
-                    <div key={basketNum} className={`mb-3 p-3 rounded border ${currentBasket === basketNum ? 'bg-white border-rose-300' : 'bg-rose-100 border-rose-200'
+                    <div key={basketNum} className={`mb-3 p-3 rounded border ${currentBasket === basketNum ? 'bg-white border-green-300' : 'bg-green-100 border-green-200'
                       }`}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-rose-800">Basket #{basketNum}</span>
+                        <span className="font-medium text-green-800">Basket #{basketNum}</span>
                         <button
                           onClick={() => switchBasket(basketNum)}
                           className={`text-xs px-2 py-1 rounded ${currentBasket === basketNum
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-white text-rose-600 border border-rose-300'
+                              ? 'bg-green-600 text-white'
+                              : 'bg-white text-green-600 border border-green-300'
                             }`}
                         >
                           {currentBasket === basketNum ? 'Active' : 'Switch'}
@@ -385,7 +384,7 @@ export default function CustomizeBasket() {
 
                       {/* Basket items preview */}
                       <div className="mb-2">
-                        <div className="text-xs text-rose-600 mb-1">
+                        <div className="text-xs text-green-600 mb-1">
                           {getBasketItems(basketNum).length}/{MAX_ITEMS_PER_BASKET} items
                         </div>
 
@@ -395,7 +394,7 @@ export default function CustomizeBasket() {
                             {getBasketItems(basketNum).slice(0, 3).map((item, index) => (
                               <div
                                 key={item.id || index}
-                                className="group relative flex items-center gap-2 p-2 bg-white rounded border hover:bg-rose-50 transition-colors duration-200"
+                                className="group relative flex items-center gap-2 p-2 bg-white rounded border hover:bg-green-50 transition-colors duration-200"
                               >
                                 {item.image && (
                                   <img
@@ -428,7 +427,7 @@ export default function CustomizeBasket() {
 
                             {/* Show "+X more" if there are more items */}
                             {getBasketItems(basketNum).length > 3 && (
-                              <div className="text-xs text-rose-600 text-center py-1 bg-rose-50 rounded">
+                              <div className="text-xs text-green-600 text-center py-1 bg-green-50 rounded">
                                 +{getBasketItems(basketNum).length - 3} more items
                               </div>
                             )}
@@ -440,8 +439,8 @@ export default function CustomizeBasket() {
                         )}
                       </div>
 
-                      <div className="flex justify-between items-center border-t pt-2">
-                        <div className="text-sm font-semibold text-rose-900">
+                      <div className="flex justify-between items-center border-t border-green-200 pt-2">
+                        <div className="text-sm font-semibold text-green-900">
                           Total: ₹{getBasketTotal(basketNum)}
                         </div>
 
@@ -460,7 +459,7 @@ export default function CustomizeBasket() {
                   {basketItems.length > 0 && (
                     <button
                       onClick={proceedToCheckout}
-                      className="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-2 rounded-lg font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center space-x-2"
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 flex items-center justify-center space-x-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       <span>Checkout All Baskets</span>
@@ -473,8 +472,8 @@ export default function CustomizeBasket() {
                   <button
                     onClick={() => handleCategorySelect('all')}
                     className={`w-full text-left py-3 px-4 rounded-lg font-semibold transition-all duration-300 ${selectedCategory === 'all'
-                      ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg'
-                      : 'bg-gray-50 text-gray-700 hover:bg-rose-50 hover:text-rose-600'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
+                        : 'bg-gray-50 text-gray-700 hover:bg-green-50 hover:text-green-600'
                       }`}
                   >
                     All Products
@@ -484,12 +483,12 @@ export default function CustomizeBasket() {
                 {/* Main Categories */}
                 <div className="space-y-4">
                   {categories?.map((category) => (
-                    <div key={category._id} className="border border-gray-200 rounded-lg overflow-hidden">
+                    <div key={category._id} className="border border-green-200 rounded-lg overflow-hidden">
                       <button
                         onClick={() => toggleCategory(category._id)}
                         className={`w-full flex items-center justify-between p-4 font-semibold text-left transition-colors ${selectedCategory === category._id
-                          ? 'bg-rose-50 text-rose-600'
-                          : 'bg-white text-gray-700 hover:bg-gray-50'
+                            ? 'bg-green-50 text-green-600'
+                            : 'bg-white text-gray-700 hover:bg-green-50'
                           }`}
                       >
                         <span>{category.name}</span>
@@ -501,13 +500,13 @@ export default function CustomizeBasket() {
                       </button>
 
                       {expandedCategories?.includes(category._id) && (
-                        <div className="border-t border-gray-200">
+                        <div className="border-t border-green-200">
                           {/* All in Category Option */}
                           <button
                             onClick={() => handleCategorySelect(category._id)}
                             className={`w-full text-left py-2 px-6 text-sm transition-colors ${selectedCategory === category._id && selectedSubcategory === 'all'
-                              ? 'bg-rose-100 text-rose-600 font-medium'
-                              : 'text-gray-600 hover:bg-rose-50'
+                                ? 'bg-green-100 text-green-600 font-medium'
+                                : 'text-gray-600 hover:bg-green-50'
                               }`}
                           >
                             All {category.name}
@@ -525,9 +524,9 @@ export default function CustomizeBasket() {
                                   setSelectedCategory(category._id);
                                   handleSubcategorySelect(subcategory._id);
                                 }}
-                                className={`w-full text-left py-2 px-6 text-sm transition-colors border-t border-gray-100 ${selectedSubcategory === subcategory._id
-                                  ? 'bg-rose-100 text-rose-600 font-medium'
-                                  : 'text-gray-600 hover:bg-rose-50'
+                                className={`w-full text-left py-2 px-6 text-sm transition-colors border-t border-green-100 ${selectedSubcategory === subcategory._id
+                                    ? 'bg-green-100 text-green-600 font-medium'
+                                    : 'text-gray-600 hover:bg-green-50'
                                   }`}
                               >
                                 {subcategory.name}
@@ -541,12 +540,12 @@ export default function CustomizeBasket() {
                 </div>
 
                 {/* Sort By */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="mt-6 pt-6 border-t border-green-200">
                   <h4 className="font-semibold text-gray-900 mb-3">Sort By</h4>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 bg-white"
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
                   >
                     <option value="featured">Featured</option>
                     <option value="price-low">Price: Low to High</option>
@@ -566,18 +565,18 @@ export default function CustomizeBasket() {
                 <p className="text-gray-600">
                   {sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''} available
                   {selectedCategory !== 'all' && (
-                    <span className="text-rose-600 font-medium">
+                    <span className="text-green-600 font-medium">
                       {' '}in {getCategoryName(selectedCategory)}
                     </span>
                   )}
                   {selectedSubcategory !== 'all' && (
-                    <span className="text-rose-600 font-medium">
+                    <span className="text-green-600 font-medium">
                       {' '}› {getSubcategoryName(selectedSubcategory)}
                     </span>
                   )}
                 </p>
               </div>
-              <div className="flex items-center space-x-2 text-rose-600">
+              <div className="flex items-center space-x-2 text-green-600">
                 <Gift className="w-5 h-5" />
                 <span className="font-semibold">Current Basket: #{currentBasket}</span>
               </div>
@@ -585,9 +584,9 @@ export default function CustomizeBasket() {
 
             {sortedProducts.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
+                <div className="text-6xl mb-4">🌿</div>
                 <h3 className="text-2xl font-bold text-gray-700 mb-2">No products found</h3>
-                <p className="text-gray-600">Try adjusting your filters to see more products.</p>
+                <p className="text-gray-600">Try adjusting your filters to see more herbal products.</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

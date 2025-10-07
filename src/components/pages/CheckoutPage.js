@@ -178,7 +178,7 @@ export default function CheckoutPage() {
           </h1>
           <button
             onClick={() => navigate(isGiftBasketCheckout ? '/gift-baskets' : '/cart')}
-            className="text-rose-600 hover:text-rose-700 font-medium"
+            className="text-green-600 hover:text-green-700 font-medium"
           >
             ← Back to {isGiftBasketCheckout ? 'Gift Baskets' : 'Cart'}
           </button>
@@ -192,8 +192,7 @@ export default function CheckoutPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {isGiftBasketCheckout && (
                   <>
-                    <div className="flex gap-6">
-
+                    <div className="md:col-span-2 grid md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Recipient Name
@@ -204,12 +203,11 @@ export default function CheckoutPage() {
                           required
                           value={shippingInfo.recipientName}
                           onChange={handleInputChange}
-                          className="w-[300px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                          className="w-full px-4 py-3 border rounded-lg focus:ring-2 transition-colors duration-200"
                           placeholder="Enter recipient's name"
                         />
                       </div>
-
-                      <div className="md:col-span-2">
+                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Gift Message (Optional)
                         </label>
@@ -218,12 +216,11 @@ export default function CheckoutPage() {
                           value={shippingInfo.giftMessage}
                           onChange={handleInputChange}
                           rows="1"
-                          className="w-[400px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                          className="w-full px-4 py-3 border rounded-lg focus:ring-2 transition-colors duration-200"
                           placeholder="Add a personal gift message"
                         />
                       </div>
                     </div>
-
                   </>
                 )}
 
@@ -266,7 +263,7 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                <PincodeCheck value={shippingInfo.pincode} onChange={handleInputChange} onShippingCostChange={setShippingCost}/>
+                <PincodeCheck value={shippingInfo.pincode} onChange={handleInputChange} onShippingCostChange={setShippingCost} />
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input
@@ -292,9 +289,9 @@ export default function CheckoutPage() {
                 // Gift Baskets Summary
                 <div className="space-y-4 mb-6">
                   {getUniqueBaskets().map(basketNum => (
-                    <div key={basketNum} className="border rounded-lg p-4 bg-rose-50">
+                    <div key={basketNum} className="border rounded-lg p-4 bg-green-50">
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-semibold text-rose-800">Basket #{basketNum}</h4>
+                        <h4 className="font-semibold text-green-800">Basket #{basketNum}</h4>
                         <span className="text-sm font-medium">₹{getBasketTotal(basketNum)}</span>
                       </div>
                       <div className="space-y-2">
@@ -356,9 +353,9 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={isPlacingOrder || !isServiceable}
-                className={`w-full mt-6 bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-lg font-semibold transition-all duration-300 ${isPlacingOrder || !isServiceable
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:from-rose-600 hover:to-pink-600'
+                className={`w-full mt-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-lg font-semibold transition-all duration-300 ${isPlacingOrder || !isServiceable
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:from-green-600 hover:to-emerald-600'
                   }`}
               >
                 {isPlacingOrder ? (
@@ -367,7 +364,7 @@ export default function CheckoutPage() {
                     Placing Order...
                   </div>
                 ) : (
-                  `Place Order - ₹${finalTotal}`
+                  `Place Order  ₹${finalTotal}`
                 )}
               </button>
 

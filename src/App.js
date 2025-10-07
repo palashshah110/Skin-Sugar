@@ -30,7 +30,7 @@ export const AppContext = createContext();
 // Main Layout Component (with Header and Footer)
 const MainLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-amber-50">
       <Header />
       <ScrollToTop />
       <main>{children}</main>
@@ -53,7 +53,7 @@ function App() {
     orders, setOrders,
     mobileMenuOpen, setMobileMenuOpen,
     selectedProductId, setSelectedProductId,
-    
+
     basketItems, setBasketItems
   };
 

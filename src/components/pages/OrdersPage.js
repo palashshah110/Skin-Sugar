@@ -86,9 +86,9 @@ export default function OrdersPage() {
           <div className="p-6">
             {/* Order Type Badge */}
             {order.orderType === 'gift_basket' && (
-              <div className="flex items-center gap-2 mb-6 p-3 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg border border-rose-200">
-                <Gift className="w-5 h-5 text-rose-600" />
-                <span className="font-semibold text-rose-700">Gift Basket Order</span>
+              <div className="flex items-center gap-2 mb-6 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                <Gift className="w-5 h-5 text-green-600" />
+                <span className="font-semibold text-green-700">Gift Basket Order</span>
               </div>
             )}
 
@@ -98,10 +98,10 @@ export default function OrdersPage() {
                 <h4 className="font-semibold text-gray-900 mb-4 text-lg">Gift Baskets</h4>
                 <div className="space-y-4">
                   {order.baskets.map((basket, basketIndex) => (
-                    <div key={basketIndex} className="border-2 border-rose-200 rounded-lg p-4 bg-rose-50">
+                    <div key={basketIndex} className="border-2 border-green-200 rounded-lg p-4 bg-green-50">
                       <div className="flex justify-between items-center mb-3">
-                        <h5 className="font-bold text-rose-800 text-lg">Basket #{basket.basketNumber}</h5>
-                        <span className="font-semibold text-rose-900">₹{basket.total}</span>
+                        <h5 className="font-bold text-green-800 text-lg">Basket #{basket.basketNumber}</h5>
+                        <span className="font-semibold text-green-900">₹{basket.total}</span>
                       </div>
                       <div className="space-y-3">
                         {basket.items.map((item, itemIndex) => (
@@ -220,7 +220,7 @@ export default function OrdersPage() {
           <div className="bg-gray-50 px-6 py-4 border-t flex justify-end">
             <button
               onClick={onClose}
-              className="bg-rose-600 text-white px-6 py-2 rounded-lg hover:bg-rose-700 transition-colors"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
               Close
             </button>
@@ -241,7 +241,7 @@ export default function OrdersPage() {
           <p className="text-gray-600 mb-8">You need to be logged in to view your orders</p>
           <button
             onClick={() => navigate('/login')}
-            className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
           >
             Login
           </button>
@@ -254,7 +254,7 @@ export default function OrdersPage() {
     return (
       <div className="py-16 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your orders...</p>
         </div>
       </div>
@@ -272,7 +272,7 @@ export default function OrdersPage() {
           <p className="text-gray-600 mb-8">Start shopping to see your orders here!</p>
           <button
             onClick={() => navigate('/products')}
-            className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-full font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
           >
             Shop Now
           </button>
@@ -309,7 +309,7 @@ export default function OrdersPage() {
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           {order.orderType === 'gift_basket' ? (
-                            <div className="flex items-center gap-1 text-rose-600">
+                            <div className="flex items-center gap-1 text-green-600">
                               <Gift className="w-4 h-4" />
                               <span className="text-xs font-medium">Gift Basket Order</span>
                             </div>
@@ -359,7 +359,7 @@ export default function OrdersPage() {
                     
                     <button
                       onClick={() => viewOrderDetails(order)}
-                      className="flex items-center gap-2 bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 transition-colors"
+                      className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                       View Details

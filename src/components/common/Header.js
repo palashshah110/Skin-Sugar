@@ -22,9 +22,9 @@ export default function Header() {
     navigate("/login");
   };
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const menuItem = [{ name: 'home', route: "/" }, { name: 'products', route: "/products" }, {name: 'Personalized Hampers', route:"/customizebasket"} , { name: 'faq', route: "/faq" }, { name: 'contact', route: "/contact" }];
+  const menuItem = [{ name: 'home', route: "/" }, { name: 'products', route: "/products" }, { name: 'Personalized Hampers', route: "/customizebasket" }, { name: 'faq', route: "/faq" }, { name: 'contact', route: "/contact" }];
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-rose-100">
+    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-green-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -32,10 +32,10 @@ export default function Header() {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-2 rounded-full">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-full">
               <Leaf className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               Skin Sugars
             </span>
           </div>
@@ -49,7 +49,7 @@ export default function Header() {
                   navigate(page.route);
                   setMobileMenuOpen(false);
                 }}
-                className={`text-left text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentRoute === page.route ? 'text-rose-600' : 'text-gray-700'
+                className={`text-left text-sm font-medium transition-colors capitalize hover:text-green-600 ${currentRoute === page.route ? 'text-green-600' : 'text-gray-700'
                   }`}
               >
                 {page.name}
@@ -66,14 +66,14 @@ export default function Header() {
                 onClick={() => setOpen(!open)}
                 onMouseEnter={() => setOpen(true)} // hover (desktop)
                 onMouseLeave={() => setOpen(false)}
-                className="p-2 hover:bg-rose-50 rounded-full transition-colors"
+                className="p-2 hover:bg-green-50 rounded-full transition-colors"
               >
                 <User className="w-5 h-5 text-gray-600" />
               </button>
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="text-sm font-medium text-gray-700 hover:text-rose-600 transition-colors"
+                className="text-sm font-medium text-gray-700 hover:text-green-600 transition-colors"
               >
                 Login
               </button>
@@ -82,13 +82,13 @@ export default function Header() {
               <div
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
-                className="absolute top-10 right-20 mt-2 w-30 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                className="absolute top-10 right-20 mt-2 w-30 bg-white rounded-lg shadow-lg border border-green-200 z-50"
               >
                 <ul className="py-2 text-sm text-gray-700">
                   <li>
                     <button
                       onClick={() => navigate("/profile")}
-                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-rose-50"
+                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-green-50"
                     >
                       <User className="w-4 h-4" /> Profile
                     </button>
@@ -96,7 +96,7 @@ export default function Header() {
                   <li>
                     <button
                       onClick={() => navigate("/cart")}
-                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-rose-50"
+                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-green-50"
                     >
                       <ShoppingCart className="w-4 h-4" /> Cart
                     </button>
@@ -104,7 +104,7 @@ export default function Header() {
                   <li>
                     <button
                       onClick={() => navigate("/orders")}
-                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-rose-50"
+                      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-green-50"
                     >
                       <ListOrdered className="w-4 h-4" /> Orders
                     </button>
@@ -113,7 +113,7 @@ export default function Header() {
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-rose-50 absoulate"
+                      className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-green-50"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -123,18 +123,18 @@ export default function Header() {
             )}
             <button
               onClick={() => navigate('/cart')}
-              className="relative p-2 hover:bg-rose-50 rounded-full transition-colors"
+              className="relative p-2 hover:bg-green-50 rounded-full transition-colors"
             >
               <ShoppingCart className="w-5 h-5 text-gray-600" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}
             </button>
 
             <button
-              className="md:hidden p-2 hover:bg-rose-50 rounded-full transition-colors"
+              className="md:hidden p-2 hover:bg-green-50 rounded-full transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -144,7 +144,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-rose-100 py-4">
+          <div className="md:hidden border-t border-green-100 py-4">
             <nav className="flex flex-col space-y-3">
               {menuItem.map((page) => (
                 <button
@@ -153,7 +153,7 @@ export default function Header() {
                     navigate(page.route);
                     setMobileMenuOpen(false);
                   }}
-                  className={`text-left text-sm font-medium transition-colors capitalize hover:text-rose-600 ${currentRoute === page.route ? 'text-rose-600' : 'text-gray-700'
+                  className={`text-left text-sm font-medium transition-colors capitalize hover:text-green-600 ${currentRoute === page.route ? 'text-green-600' : 'text-gray-700'
                     }`}
                 >
                   {page.name}

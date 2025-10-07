@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Apply CSS Variables */
+:root {
+  --color-primary-50: #f0fdf4;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-secondary-500: #78716c;
+  --color-accent-500: #f59e0b;
+}
+
+/* Custom component classes using theme */
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-6 rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-green-500 text-green-600 font-semibold py-3 px-6 rounded-full hover:bg-green-50 transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-br from-green-50 to-emerald-50;
+  }
+  
+  .section-gradient {
+    @apply bg-gradient-to-br from-green-50 via-white to-emerald-50;
+  }
+  
+  .text-primary {
+    @apply text-green-600;
+  }
+  
+  .bg-primary {
+    @apply bg-green-500;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
+}

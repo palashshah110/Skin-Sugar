@@ -4,18 +4,20 @@ import { fetchCategoriesAndSubcategories } from "../data/categories";
 import ProductCard from "../common/ProductCard";
 import api from "../../api";
 import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState('all');
-  const [sortBy, setSortBy] = useState('featured');
-  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy] = useState('featured');
+  const [showFilters, setShowFilters] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [allSubcategories, setAllSubcategories] = useState([]);
-
+ const { categoryId } = useParams(); 
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,6 +31,15 @@ export default function ProductsPage() {
     };
     fetchData();
   }, []);
+useEffect(() => {
+    if (categoryId && categories.length > 0) {
+      const categoryFromRoute = categories.find(cat => cat._id === categoryId);
+      if (categoryFromRoute) {
+        setSelectedCategory(categoryFromRoute._id);
+        setExpandedCategories(prev => [...prev, categoryFromRoute._id]);
+      }
+    }
+  }, [categoryId, categories]);
 
   const toggleCategory = (categoryId) => {
     setExpandedCategories(prev =>
@@ -75,6 +86,15 @@ export default function ProductsPage() {
     setSelectedSubcategory('all');
     if (categoryId !== 'all') {
       setExpandedCategories(prev => [...prev, categoryId]);
+    }
+    const routeName = Object.keys(categories).find(
+        key => categories[key]._id === categoryId
+      );
+      if (routeName) {
+        navigate(`/categories/${routeName}`, { replace: true });
+      }
+     else {
+      navigate('/products', { replace: true });
     }
   };
 
@@ -188,6 +208,7 @@ export default function ProductsPage() {
                               onClick={() => {
                                 setSelectedCategory(category._id);
                                 handleSubcategorySelect(subcategory._id);
+                                setShowFilters(false);
                               }}
                               className={`w-full text-left py-2 px-6 text-sm transition-colors border-t border-green-100 ${
                                 selectedSubcategory === subcategory._id
@@ -206,7 +227,7 @@ export default function ProductsPage() {
               </div>
 
               {/* Sort By */}
-              <div className="mt-6 pt-6 border-t border-green-200">
+              {/* <div className="mt-6 pt-6 border-t border-green-200">
                 <h4 className="font-semibold text-gray-900 mb-3">Sort By</h4>
                 <select
                   value={sortBy}
@@ -219,7 +240,7 @@ export default function ProductsPage() {
                   <option value="rating">Highest Rated</option>
                   <option value="name">Name A-Z</option>
                 </select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

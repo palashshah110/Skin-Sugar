@@ -1,21 +1,29 @@
-import {  Instagram, Leaf } from "lucide-react";
+import {  Instagram } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
+import { useState, useEffect } from "react";
 
 export default function Footer() {
   const navigate = useNavigate();
-
+  const [categories, setCategories] = useState([]);
+  const fetchCateogory = async () => {
+    try {
+      const response = await api.get("/categories");
+      setCategories(response.data || []);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  }
+  useEffect(() => {
+    fetchCateogory();
+  }, []);
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white px-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-6">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-full">
-                <Leaf className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                Skin Sugars
-              </span>
+              <img src="/logo.png" alt="logo" className="w-24 h-24 bg-white" />
             </div>
             <p className="text-gray-400 mb-6">
               Premium handcrafted herbal skincare solutions for your natural beauty routine.
@@ -68,44 +76,23 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
+          {categories.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold mb-6">Categories</h3>
             <ul className="space-y-3">
-              <li>
-                <button
-                  onClick={() => navigate('/products/chemical-free-skincare')}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Chemical Free Skincare
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate('/products/aesthetic-aroma')}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Aesthetic Aroma
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate('/products/handmade-chocolates')}
-                className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Handmade Chocolates
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate('/customizebasket')}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Gift Baskets
-                </button>
-              </li>
+              {categories.map((category) => (
+                <li key={category._id}>
+                  <button
+                    onClick={() => navigate(`/categories/${category._id}`)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    {category.name}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
+)}
 
           <div>
             <h3 className="text-lg font-semibold mb-6">Newsletter</h3>
@@ -125,7 +112,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 Skin Sugars. All rights reserved. Made with 🌿 for natural beauty.
+            © 2025 Skin Sugars. All rights reserved. Made with 🌿 for natural beauty.
           </p>
         </div>
       </div>

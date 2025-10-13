@@ -43,6 +43,7 @@ export default function ContactPage() {
                       type="text"
                       name="name"
                       required
+                      placeholder="Enter your name"   
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border   rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
@@ -54,6 +55,7 @@ export default function ContactPage() {
                       type="email"
                       name="email"
                       required
+                      placeholder="Enter your email"   
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
@@ -67,6 +69,7 @@ export default function ContactPage() {
                     type="text"
                     name="subject"
                     required
+                    placeholder="Enter your subject"   
                     value={formData.subject}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border   rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
@@ -79,6 +82,7 @@ export default function ContactPage() {
                     name="message"
                     required
                     value={formData.message}
+                    placeholder="Enter your message"   
                     onChange={handleChange}
                     rows="6"
                     className="w-full px-4 py-3 border   rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"

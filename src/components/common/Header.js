@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
-import { Leaf, ShoppingCart, User, X, Menu, LogOut, ListOrdered } from "lucide-react";
+import { ShoppingCart, User, X, Menu, LogOut, ListOrdered } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Header() {
@@ -32,12 +32,7 @@ export default function Header() {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-full">
-              <Leaf className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-              Skin Sugars
-            </span>
+            <img src="/logo.png" alt="logo" className="w-24 h-24" />
           </div>
 
           {/* Desktop Navigation */}

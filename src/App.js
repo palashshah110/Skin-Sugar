@@ -24,6 +24,8 @@ import Products from './components/admin/Products';
 import Orders from './components/admin/Orders';
 import Users from './components/admin/Users';
 import CustomizeBasket from './components/pages/CustomizeBasketPage';
+import BasketList from './components/pages/BasketList';
+import BasketSelectionPage from './components/pages/BasketSelectionPage';
 // Context for managing app state
 export const AppContext = createContext();
 
@@ -46,14 +48,15 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [basketItems, setBasketItems] = useState([]);
-
+  const [selectedBasket, setSelectedBasket] = useState(null);
+  
   const contextValue = {
     user, setUser,
     cart, setCart,
     orders, setOrders,
     mobileMenuOpen, setMobileMenuOpen,
     selectedProductId, setSelectedProductId,
-
+    selectedBasket, setSelectedBasket,
     basketItems, setBasketItems
   };
 
@@ -80,7 +83,9 @@ function App() {
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/products/:id" element={<ProductDetailsPage />} />
                 <Route path="/categories/:categoryId" element={<ProductsPage />} />
-                <Route path="/customizebasket" element={<CustomizeBasket />} />
+                <Route path="/basket-list" element={<BasketList />} />
+                <Route path="/basket-selection" element={<BasketSelectionPage />} />
+                <Route path="/customize-basket" element={<CustomizeBasket />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/profile" element={<ProfilePage />} />

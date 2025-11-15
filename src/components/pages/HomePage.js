@@ -85,7 +85,6 @@ export default function HomePage() {
     <div>
       {/* Hero Section */}
       <SimpleCarousel />
-
       {/* Brand Promise Banner */}
       <section className="bg-white border-b border-green-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -99,6 +98,46 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      {/* Customize Hamper Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-1 gap-8">
+            {[
+              {
+                title: "Customize Your Hampers",
+                image: "https://plus.unsplash.com/premium_photo-1661398229744-e38032aa4e05?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2940",
+                description: "Create your own custom hampers with our selection of herbal ingredients",
+                link: "/basket-selection"
+              }
+            ].map((category, index) => (
+              <div
+                key={index}
+                className="group cursor-pointer"
+                onClick={() => navigate(category.link)}
+              >
+                <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
+
+                    {/* Overlay Content */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                      <h3 className="text-xl font-bold text-white mb-2">{category.title}</h3>
+                      <p className="text-white/90 text-sm">{category.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
 
       {/* Category Showcase Section */}
       <section className="py-16 bg-white">
@@ -261,37 +300,92 @@ export default function HomePage() {
           )}
         </div>
       </section>
-      {/* Customize Hamper Section */}
-      <section className="py-16">
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-br   from-green-50 to-white-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-1 gap-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover why thousands of customers trust our natural products for their wellness journey
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: "Customize Your Hampers",
-                image: "https://plus.unsplash.com/premium_photo-1661398229744-e38032aa4e05?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2940",
-                description: "Create your own custom hampers with our selection of herbal ingredients",
-                link: "/customize-hamper"
+                name: "Priya Sharma",
+                location: "Mumbai",
+                rating: 5,
+                comment: "The natural skincare products transformed my skin! I've never felt more confident. The results are visible within weeks.",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Rose & Sandalwood Face Cream"
+              },
+              {
+                name: "Rahul Mehta",
+                location: "Delhi",
+                rating: 5,
+                comment: "The aromatherapy candles create such a peaceful atmosphere in my home. Perfect for meditation and relaxation after work.",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Lavender Essential Oil Candle"
+              },
+              {
+                name: "Ananya Patel",
+                location: "Bangalore",
+                rating: 5,
+                comment: "Handcrafted chocolates are absolutely divine! The perfect gift for my family. They loved the natural sweetness without guilt.",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Dark Chocolate Assortment"
+              },
+              {
+                name: "Vikram Singh",
+                location: "Chennai",
+                rating: 5,
+                comment: "The custom hamper service is exceptional! Created a beautiful gift basket for my wife's birthday. She was thrilled!",
+                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Custom Anniversary Hamper"
+              },
+              {
+                name: "Sneha Reddy",
+                location: "Hyderabad",
+                rating: 5,
+                comment: "As someone with sensitive skin, I'm amazed how gentle yet effective these products are. No reactions, just glowing skin!",
+                image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Aloe Vera & Neem Face Wash"
+              },
+              {
+                name: "Arjun Kapoor",
+                location: "Pune",
+                rating: 5,
+                comment: "The eco-friendly packaging and natural ingredients convinced me to switch. My entire family now uses these products.",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                product: "Complete Skincare Kit"
               }
-            ].map((category, index) => (
-              <div
-                key={index}
-                className="group cursor-pointer"
-                onClick={() => navigate(category.link)}
-              >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={category.image}
-                      alt={category.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
+            ].map((testimonial, index) => (
+              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                {/* Rating Stars */}
+                <div className="flex mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
 
-                    {/* Overlay Content */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                      <h3 className="text-xl font-bold text-white mb-2">{category.title}</h3>
-                      <p className="text-white/90 text-sm">{category.description}</p>
-                    </div>
+                {/* Testimonial Text */}
+                <p className="text-gray-700 mb-6 italic leading-relaxed">
+                  "{testimonial.comment}"
+                </p>
+
+                {/* Customer Info */}
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-green-200"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-600">{testimonial.location}</p>
+                    <p className="text-xs text-green-600 font-medium mt-1">{testimonial.product}</p>
                   </div>
                 </div>
               </div>
@@ -299,6 +393,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
       <SocialIcons />
     </div>
   );

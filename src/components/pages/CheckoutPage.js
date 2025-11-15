@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api";
 import PincodeCheck from './PinCodeCheck'
 export default function CheckoutPage() {
-  const { cart, setCart, setOrders, user, basketItems, setBasketItems } = useContext(AppContext);
+  const { cart, setCart, setOrders, user, basketItems, setBasketItems, selectedBasket } = useContext(AppContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   // Check if coming from gift baskets
   const isGiftBasketCheckout = location.state?.basketType === 'gift';
   const itemsToCheckout = isGiftBasketCheckout ? basketItems : cart;
-
+  console.log(selectedBasket)
   const [shippingInfo, setShippingInfo] = useState({
     address: '',
     city: '',
@@ -114,6 +114,7 @@ export default function CheckoutPage() {
           })
         },
         orderType: isGiftBasketCheckout ? 'gift_basket' : 'regular',
+        selectedBasket: isGiftBasketCheckout ? selectedBasket.name : null,
         ...(isGiftBasketCheckout && {
           baskets: getUniqueBaskets().map(basketNum => ({
             basketNumber: basketNum,
@@ -123,7 +124,7 @@ export default function CheckoutPage() {
           }))
         })
       };
-
+      console.log(orderData)
       // Make API call to create order
       const response = await api.post('/orders', orderData);
 

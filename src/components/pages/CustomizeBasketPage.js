@@ -5,14 +5,17 @@ import ProductCard from "../common/ProductCard";
 import toast from "react-hot-toast";
 import Swal from 'sweetalert2';
 import api from "../../api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../../App";
 
 export default function CustomizeBasket() {
+  const location = useLocation();
+  const selectedBasket = location.state?.basket || null;
+
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,8 +24,8 @@ export default function CustomizeBasket() {
   const [currentBasket, setCurrentBasket] = useState(1);
   const { setBasketItems, basketItems, user } = useContext(AppContext);
 
-  const BASKET_PRICE = 100;
-  const MAX_ITEMS_PER_BASKET = 3;
+  const MAX_ITEMS_PER_BASKET = selectedBasket?.maxItems || 3;
+  const BASKET_PRICE = selectedBasket?.price || 100;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +64,8 @@ export default function CustomizeBasket() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+
 
   const filteredProducts = products.filter(product => {
     const categoryMatch = selectedCategory === 'all' || product.category?._id === selectedCategory || product.category === selectedCategory;
@@ -294,7 +299,7 @@ export default function CustomizeBasket() {
             basketType: 'gift',
             baskets: getUniqueBaskets().map(basketNum => ({
               basketNumber: basketNum,
-              items: basketItems.filter(item => item.basket === basketNum),
+              items: basketItems.filter(item => item.basket === basketNum),              
               total: getBasketTotal(basketNum)
             }))
           }
@@ -331,19 +336,34 @@ export default function CustomizeBasket() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Customize Gift Basket</h1>
-          <p className="text-xl text-gray-600">Create your perfect gift basket with our premium herbal products</p>
-          <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-            <div className="flex items-center space-x-3">
-              <Gift className="w-6 h-6 text-green-600" />
-              <div>
-                <p className="text-green-800 font-semibold">₹{BASKET_PRICE} Basket + Your Choice of Products</p>
-                <p className="text-green-700 text-sm">Each basket can contain up to {MAX_ITEMS_PER_BASKET} products</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Customize Your {selectedBasket?.name || 'Gift Basket'}
+          </h1>
+          <p className="text-xl text-gray-600">
+            Add products to your {selectedBasket?.name?.toLowerCase() || 'basket'} (Max: {MAX_ITEMS_PER_BASKET} items)
+          </p>
+          <div className="mt-4 p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg border border-rose-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Gift className="w-6 h-6 text-rose-600" />
+                <div>
+                  <p className="text-rose-800 font-semibold">
+                    {selectedBasket?.name} - ₹{BASKET_PRICE} + Product Costs
+                  </p>
+                  <p className="text-rose-700 text-sm">
+                    Capacity: {MAX_ITEMS_PER_BASKET} items • Size: {selectedBasket?.dimensions}
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={() => navigate('/basket-selection')}
+                className="text-rose-600 hover:text-rose-700 text-sm font-medium"
+              >
+                Change Basket
+              </button>
             </div>
           </div>
         </div>
-
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Filters Sidebar */}
           <div className="lg:col-span-1">
@@ -374,8 +394,8 @@ export default function CustomizeBasket() {
                         <button
                           onClick={() => switchBasket(basketNum)}
                           className={`text-xs px-2 py-1 rounded ${currentBasket === basketNum
-                              ? 'bg-green-600 text-white'
-                              : 'bg-white text-green-600 border border-green-300'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-white text-green-600 border border-green-300'
                             }`}
                         >
                           {currentBasket === basketNum ? 'Active' : 'Switch'}
@@ -472,8 +492,8 @@ export default function CustomizeBasket() {
                   <button
                     onClick={() => handleCategorySelect('all')}
                     className={`w-full text-left py-3 px-4 rounded-lg font-semibold transition-all duration-300 ${selectedCategory === 'all'
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
-                        : 'bg-gray-50 text-gray-700 hover:bg-green-50 hover:text-green-600'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
+                      : 'bg-gray-50 text-gray-700 hover:bg-green-50 hover:text-green-600'
                       }`}
                   >
                     All Products
@@ -487,8 +507,8 @@ export default function CustomizeBasket() {
                       <button
                         onClick={() => toggleCategory(category._id)}
                         className={`w-full flex items-center justify-between p-4 font-semibold text-left transition-colors ${selectedCategory === category._id
-                            ? 'bg-green-50 text-green-600'
-                            : 'bg-white text-gray-700 hover:bg-green-50'
+                          ? 'bg-green-50 text-green-600'
+                          : 'bg-white text-gray-700 hover:bg-green-50'
                           }`}
                       >
                         <span>{category.name}</span>
@@ -505,8 +525,8 @@ export default function CustomizeBasket() {
                           <button
                             onClick={() => handleCategorySelect(category._id)}
                             className={`w-full text-left py-2 px-6 text-sm transition-colors ${selectedCategory === category._id && selectedSubcategory === 'all'
-                                ? 'bg-green-100 text-green-600 font-medium'
-                                : 'text-gray-600 hover:bg-green-50'
+                              ? 'bg-green-100 text-green-600 font-medium'
+                              : 'text-gray-600 hover:bg-green-50'
                               }`}
                           >
                             All {category.name}
@@ -525,8 +545,8 @@ export default function CustomizeBasket() {
                                   handleSubcategorySelect(subcategory._id);
                                 }}
                                 className={`w-full text-left py-2 px-6 text-sm transition-colors border-t border-green-100 ${selectedSubcategory === subcategory._id
-                                    ? 'bg-green-100 text-green-600 font-medium'
-                                    : 'text-gray-600 hover:bg-green-50'
+                                  ? 'bg-green-100 text-green-600 font-medium'
+                                  : 'text-gray-600 hover:bg-green-50'
                                   }`}
                               >
                                 {subcategory.name}

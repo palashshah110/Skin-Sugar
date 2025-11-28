@@ -12,7 +12,7 @@ const SimpleCarousel = () => {
       title: "Bath & Body",
       subtitle: "100% Organic Ingredients",
       // description: "Special festive hampers starting at 500",
-      image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=600&fit=crop",
+      image: "./bath.jpeg",
       buttonText: "Shop Now",
       icon: Gift,
       theme: "bg-gradient-to-r from-green-600 to-emerald-600",
@@ -22,7 +22,7 @@ const SimpleCarousel = () => {
       id: 2,
       title: "Gift Something",
       subtitle: "Unique & Natural",
-      image: "https://template.canva.com/EAFO_hXQ74U/2/0/1600w-9LOZYP8yGdw.jpg",
+      image: "./gift.jpeg",
       description: "Pure herbal skincare for your natural glow",
       buttonText: "Shop Hampers",
       icon: Leaf,
@@ -34,7 +34,7 @@ const SimpleCarousel = () => {
       title: "Natural Skincare",
       subtitle: "Your Skins BF",
       // description: "Experience the best of natural skincare with our expertly crafted products.",
-      image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=1200&h=600&fit=crop",
+      image: "./skin.jpeg",
       buttonText: "Discover",
       icon: Star,
       theme: "bg-gradient-to-r from-green-500 to-emerald-500",
@@ -58,10 +58,10 @@ const SimpleCarousel = () => {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image with Green Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+        className="absolute inset-0 bg-cover bg-center transition-all duration-1000 "
         style={{ backgroundImage: `url(${currentBanner.image})` }}
       >
-        <div className={`absolute inset-0 ${currentBanner.overlay}`}></div>
+        <div className={`absolute inset-0 ${currentBanner.overlay} bg-black/30`}></div>
       </div>
 
       {/* Natural Pattern Overlay */}

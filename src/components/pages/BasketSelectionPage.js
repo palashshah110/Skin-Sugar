@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Gift, Check, Star, ArrowRight, Filter, Search } from 'lucide-react';
 import { AppContext } from '../../App';
@@ -19,11 +19,8 @@ export default function BasketSelectionPage() {
     const sizes = ['all', ...new Set(baskets.map(basket => basket.size))];
     const categories = ['all', ...new Set(baskets.map(basket => basket.category))];
 
-    useEffect(() => {
-        filterBaskets();
-    }, [selectedSize, selectedCategory, searchTerm]);
 
-    const filterBaskets = () => {
+    const filterBaskets = useCallback(() => {
         let filtered = baskets;
 
         // Filter by size
@@ -45,7 +42,7 @@ export default function BasketSelectionPage() {
         }
 
         setFilteredBaskets(filtered);
-    };
+    }, [selectedSize, selectedCategory, searchTerm]);
 
     const handleBasketSelect = (basket) => {
         setSelectedBasket(basket);
@@ -59,6 +56,10 @@ export default function BasketSelectionPage() {
         }
         navigate('/customize-basket', { state: { basket: selectedBasket } });
     };
+    
+    useEffect(() => {
+        filterBaskets();
+    }, [selectedSize, selectedCategory, searchTerm, filterBaskets]);
 
     const clearFilters = () => {
         setSelectedSize('all');

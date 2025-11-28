@@ -1,16 +1,8 @@
 import { baskets } from "../data/baskets";
-import { useNavigate } from "react-router-dom";
 import { Gift } from "lucide-react";
 import BasketCard from "../common/BasketCard";
 
 export default function BasketList() {
-  const navigate = useNavigate();
-
-  const handleSelectBasket = (basket) => {
-    // Pass selected basket info to CustomizeBasket
-    navigate("/customize-basket", { state: { basket } });
-  };
-
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold text-gray-900 mb-6 flex items-center gap-2">

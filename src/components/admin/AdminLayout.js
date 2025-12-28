@@ -7,6 +7,8 @@ import {
   Users,
   Tags,
   FolderTree,
+  ShoppingBasket,
+  Ticket,
   LogOut,
   Menu,
   X,
@@ -23,6 +25,8 @@ const AdminLayout = () => {
     { path: '/admin/categories', icon: Tags, label: 'Categories' },
     { path: '/admin/subcategories', icon: FolderTree, label: 'Subcategories' },
     { path: '/admin/products', icon: Package, label: 'Products' },
+    { path: '/admin/baskets', icon: ShoppingBasket, label: 'Baskets' },
+    { path: '/admin/coupons', icon: Ticket, label: 'Coupons' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { path: '/admin/users', icon: Users, label: 'Users' },
   ];

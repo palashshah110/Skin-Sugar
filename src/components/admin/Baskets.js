@@ -1,106 +1,80 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Search, Package, Upload, X, Star, ChevronRight, ChevronLeft, ChevronDown, Filter, Layers, RefreshCw, ChevronsLeft } from 'lucide-react';
-import api from '../../api'; // Axios instance
+import { Plus, Edit, Trash2, Search, ShoppingBasket, Upload, X, Star, ChevronRight, ChevronLeft, ChevronDown, RefreshCw, ChevronsLeft } from 'lucide-react';
+import api from '../../api';
 
-const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
+const Baskets = () => {
+  const [baskets, setBaskets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingBasket, setEditingBasket] = useState(null);
   const [imageRemoved, setImageRemoved] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [newIngredient, setNewIngredient] = useState('');
+  const [newFeature, setNewFeature] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [pageSize, setPageSize] = useState(5); // Products per page
-  const [selectedSubcategory, setSelectedSubcategory] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [totalBaskets, setTotalBaskets] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [selectedSize, setSelectedSize] = useState('');
   const [formData, setFormData] = useState({
     name: '',
-    category: '',
-    subcategory: '',
+    description: '',
     price: '',
-    originalPrice: '',
+    maxItems: '',
+    size: 'small',
+    dimensions: '',
+    features: [],
+    category: '',
+    inStock: true,
     rating: 0,
     reviews: 0,
-    inStock: true,
-    featured: false,
-    ingredients: [],
     imageFile: null,
   });
-const fetchProducts = useCallback(async (page = 1, limit = pageSize) => { 
+
+  const sizeOptions = ['small', 'medium', 'large'];
+  const categoryOptions = ['eco', 'traditional', 'luxury', 'modern', 'premium', 'corporate'];
+
+  const fetchBaskets = useCallback(async (page = 1, limit = pageSize) => {
     try {
       setLoading(true);
       const params = {
         page,
         limit,
-        ...(selectedCategory && { category: selectedCategory }),
-        ...(selectedSubcategory && { subcategory: selectedSubcategory })
+        ...(selectedSize && { size: selectedSize })
       };
-      
-      const { data } = await api.get('/admin/products', { params });
-      setProducts(data.products || []);
+
+      const { data } = await api.get('/admin/baskets', { params });
+      setBaskets(data.baskets || data || []);
       setTotalPages(data.totalPages || 1);
-      setTotalProducts(data.totalCount || 0);
+      setTotalBaskets(data.totalCount || data.length || 0);
       setCurrentPage(data.currentPage || 1);
     } catch (error) {
-      console.error('Error fetching products', error);
+      console.error('Error fetching baskets', error);
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, selectedSubcategory, pageSize]);
+  }, [selectedSize, pageSize]);
 
-  const fetchCategories = async () => {
-    try {
-      const { data } = await api.get('/admin/categories');
-      setCategories(data || data || []);
-    } catch (error) {
-      console.error('Error fetching categories', error);
-    }
-  };
+  useEffect(() => {
+    fetchBaskets(currentPage, pageSize);
+  }, [currentPage, pageSize, selectedSize, fetchBaskets]);
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
-  const handleDropDownCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    handleCategoryChange(e);
-  };
-
 
   const handlePageSizeChange = (newSize) => {
     setPageSize(Number(newSize));
-    setCurrentPage(1); // Reset to first page when changing page size
-  };
-
-  const handleSubcategoryChange = (e) => {
-    setSelectedSubcategory(e.target.value);
-  };
-
-  const handleClearFilters = () => {
-    setSelectedCategory('');
-    setSelectedSubcategory('');
     setCurrentPage(1);
   };
 
-  const fetchSubcategories = async (categoryId) => {
-    try {
-      if(!categoryId){
-        setSubcategories([]);
-        return;
-      }
-      const { data } = await api.get(`/admin/categories/${categoryId}/subcategories`);
-      setSubcategories(data || data || []);
-    } catch (error) {
-      console.error('Error fetching subcategories', error);
-    }
+  const handleClearFilters = () => {
+    setSelectedSize('');
+    setCurrentPage(1);
   };
 
   const handleSubmit = async (e) => {
@@ -109,7 +83,7 @@ const fetchProducts = useCallback(async (page = 1, limit = pageSize) => {
     try {
       const form = new FormData();
       Object.keys(formData).forEach(key => {
-        if (key === 'ingredients') {
+        if (key === 'features') {
           form.append(key, JSON.stringify(formData[key]));
         } else if (key === 'imageFile') {
           if (formData.imageFile) form.append('image', formData.imageFile);
@@ -118,102 +92,72 @@ const fetchProducts = useCallback(async (page = 1, limit = pageSize) => {
         }
       });
 
-      if (editingProduct) {
+      if (editingBasket) {
         if (formData.imageFile) {
-          await api.put(`/admin/products/${editingProduct._id}`, form);
+          await api.put(`/admin/baskets/${editingBasket._id}`, form);
         } else if (imageRemoved) {
           form.append('image', null);
-          await api.put(`/admin/products/${editingProduct._id}`, form);
+          await api.put(`/admin/baskets/${editingBasket._id}`, form);
         } else {
-          await api.put(`/admin/products/${editingProduct._id}`, form);
+          await api.put(`/admin/baskets/${editingBasket._id}`, form);
         }
-        fetchProducts();
+        fetchBaskets();
       } else {
-        const { data } = await api.post('/admin/products', form);
-        setProducts([data || data || {}, ...products]);
+        const { data } = await api.post('/admin/baskets', form);
+        setBaskets([data || data.basket || {}, ...baskets]);
       }
 
       setShowModal(false);
       resetForm();
     } catch (error) {
-      console.error('Error saving product', error);
+      console.error('Error saving basket', error);
     } finally {
       setSubmitLoading(false);
     }
   };
-   useEffect(() => {
-    fetchCategories();
-  }, []);
 
-  useEffect(() => {
-    fetchSubcategories(selectedCategory);
-    setSelectedSubcategory('');
-    setCurrentPage(1);
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    fetchProducts(currentPage, pageSize);
-  }, [currentPage, pageSize, selectedCategory, selectedSubcategory, fetchProducts]);
-
-
-  const handleEdit = (product) => {
-    setEditingProduct(product);
+  const handleEdit = (basket) => {
+    setEditingBasket(basket);
     setFormData({
-      name: product.name,
-      category: product.category?._id || product.category || '',
-      subcategory: product.subcategory?._id || product.subcategory || '',
-      price: product.price,
-      originalPrice: product.originalPrice || '',
-      rating: product.rating || 0,
-      reviews: product.reviews || 0,
-      inStock: product.inStock,
-      featured: product.featured,
-      ingredients: product.ingredients || [],
+      name: basket.name,
+      description: basket.description || '',
+      price: basket.price,
+      maxItems: basket.maxItems || '',
+      size: basket.size || 'small',
+      dimensions: basket.dimensions || '',
+      features: basket.features || [],
+      category: basket.category || '',
+      inStock: basket.inStock !== undefined ? basket.inStock : true,
+      rating: basket.rating || 0,
+      reviews: basket.reviews || 0,
       imageFile: null,
     });
-    setImagePreview(product.image || null);
-    if (product.category?._id || product.category) {
-      fetchSubcategories(product.category._id || product.category);
-    }
+    setImagePreview(basket.image || null);
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/admin/products/${id}`);
-      setProducts(products.filter(p => p._id !== id));
+      await api.delete(`/admin/baskets/${id}`);
+      setBaskets(baskets.filter(b => b._id !== id));
     } catch (error) {
-      console.error('Error deleting product', error);
+      console.error('Error deleting basket', error);
     }
   };
 
-  const handleCategoryChange = (e) => {
-    const categoryId = e.target.value;
-    setFormData({
-      ...formData,
-      category: categoryId,
-      subcategory: ''
-    });
-    if (categoryId) {
-      fetchSubcategories(categoryId);
-    } else {
-      setSubcategories([]);
-    }
-  };
-
-  const addIngredient = () => {
-    if (newIngredient.trim() && !formData.ingredients.includes(newIngredient.trim())) {
+  const addFeature = () => {
+    if (newFeature.trim() && !formData.features.includes(newFeature.trim())) {
       setFormData({
         ...formData,
-        ingredients: [...formData.ingredients, newIngredient.trim()]
+        features: [...formData.features, newFeature.trim()]
       });
-      setNewIngredient('');
+      setNewFeature('');
     }
   };
 
-const removeIngredient = (index) => {
-    const updatedIngredients = formData.ingredients.filter((_, i) => i !== index);
-    setFormData({ ...formData, ingredients: updatedIngredients });
+  const removeFeature = (index) => {
+    const updatedFeatures = formData.features.filter((_, i) => i !== index);
+    setFormData({ ...formData, features: updatedFeatures });
   };
 
   const handleImageChange = (file) => {
@@ -246,21 +190,22 @@ const removeIngredient = (index) => {
   const resetForm = () => {
     setFormData({
       name: '',
-      category: '',
-      subcategory: '',
+      description: '',
       price: '',
-      originalPrice: '',
+      maxItems: '',
+      size: 'small',
+      dimensions: '',
+      features: [],
+      category: '',
+      inStock: true,
       rating: 0,
       reviews: 0,
-      inStock: true,
-      featured: false,
-      ingredients: [],
       imageFile: null,
     });
-    setNewIngredient('');
+    setNewFeature('');
     setImagePreview(null);
-    setEditingProduct(null);
-    setSubcategories([]);
+    setEditingBasket(null);
+    setImageRemoved(false);
   };
 
   const Loader = () => (
@@ -269,11 +214,11 @@ const removeIngredient = (index) => {
     </div>
   );
 
-  const filteredProducts = products.filter(
-    p =>
-      p.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      (p.category?.name || '').toLowerCase().includes(searchText.toLowerCase()) ||
-      (p.subcategory?.name || '').toLowerCase().includes(searchText.toLowerCase())
+  const filteredBaskets = baskets.filter(
+    b =>
+      b.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      (b.category || '').toLowerCase().includes(searchText.toLowerCase()) ||
+      (b.size || '').toLowerCase().includes(searchText.toLowerCase())
   );
 
   if (loading) return <Loader />;
@@ -283,22 +228,24 @@ const removeIngredient = (index) => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-          <Package className="w-6 h-7 text-rose-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+          <ShoppingBasket className="w-6 h-7 text-rose-600" />
+          <h1 className="text-3xl font-bold text-gray-900">Baskets</h1>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 flex items-center space-x-2 transition-colors"
         >
-          <Plus className="w-4 h-4" /> <span>Add Product</span>
+          <Plus className="w-4 h-4" /> <span>Add Basket</span>
         </button>
       </div>
+
+      {/* Filters */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Filter Products</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Filter Baskets</h3>
           <button
             onClick={handleClearFilters}
-            disabled={!selectedCategory && !selectedSubcategory}
+            disabled={!selectedSize}
             className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className="w-4 h-4" />
@@ -307,71 +254,31 @@ const removeIngredient = (index) => {
         </div>
 
         <div className="flex flex-wrap gap-6 items-end">
-          {/* Category Filter */}
+          {/* Size Filter */}
           <div className="flex-1 min-w-[250px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-400" />
-              <span>Category</span>
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
             <div className="relative">
               <select
-                value={selectedCategory}
-                onChange={handleDropDownCategoryChange}
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent appearance-none bg-white"
               >
-                <option value="">All Categories</option>
-                {categories.map(category => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
+                <option value="">All Sizes</option>
+                {sizeOptions.map(size => (
+                  <option key={size} value={size}>
+                    {size.charAt(0).toUpperCase() + size.slice(1)}
                   </option>
                 ))}
               </select>
               <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
-          </div>
-
-          {/* Subcategory Filter */}
-          <div className="flex-1 min-w-[250px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-gray-400" />
-              <span>Subcategory</span>
-              {!selectedCategory && (
-                <span className="text-xs text-rose-500">(Select category first)</span>
-              )}
-            </label>
-            <div className="relative">
-              <select
-                value={selectedSubcategory}
-                onChange={handleSubcategoryChange}
-                disabled={!selectedCategory}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent appearance-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed"
-              >
-                <option value="">All Subcategories</option>
-                {subcategories.map(subcategory => (
-                  <option key={subcategory._id} value={subcategory._id}>
-                    {subcategory.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
-          </div>
-
-          {/* Active Filters Badge */}
-          <div className="flex items-center space-x-2">
-            {(selectedCategory || selectedSubcategory) && (
-              <div className="flex items-center space-x-2 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg">
-                <Filter className="w-4 h-4 text-rose-500" />
-                <span className="text-sm font-medium text-rose-700">Filters Active</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
+      {/* Page Size and Pagination Controls */}
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          {/* Page Size Selector */}
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Show</span>
             <select
@@ -384,20 +291,13 @@ const removeIngredient = (index) => {
               <option value="20">20</option>
               <option value="50">50</option>
             </select>
-            <span className="text-sm text-gray-600">products</span>
+            <span className="text-sm text-gray-600">baskets</span>
           </div>
 
-          {/* Results Count with Filter Status */}
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">
-              Total: <span className="font-semibold text-gray-900">{totalProducts}</span> products
+              Total: <span className="font-semibold text-gray-900">{totalBaskets}</span> baskets
             </span>
-            {(selectedCategory || selectedSubcategory) && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200">
-                <Filter className="w-3 h-3 mr-1" />
-                Filtered
-              </span>
-            )}
           </div>
         </div>
 
@@ -438,8 +338,8 @@ const removeIngredient = (index) => {
                   key={pageNum}
                   onClick={() => handlePageChange(pageNum)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
-                      ? 'bg-rose-500 text-white shadow-sm'
-                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-rose-500 text-white shadow-sm'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                     }`}
                 >
                   {pageNum}
@@ -464,7 +364,7 @@ const removeIngredient = (index) => {
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search products by name, category, or subcategory..."
+            placeholder="Search baskets by name, category, or size..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
@@ -477,73 +377,75 @@ const removeIngredient = (index) => {
         <table className="min-w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Basket</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Items</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredProducts.map(p => (
-              <tr key={p._id} className="hover:bg-gray-50 transition-colors">
+            {filteredBaskets.map(b => (
+              <tr key={b._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center space-x-3">
-                    {p.image && (
+                    {b.image && (
                       <img
-                        src={p.image}
-                        alt={p.name}
+                        src={b.image}
+                        alt={b.name}
                         className="w-10 h-10 rounded-lg object-cover border border-gray-200"
                       />
                     )}
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{p.name}</div>
-                      {p.featured && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800">
-                          Featured
-                        </span>
-                      )}
+                      <div className="text-sm font-medium text-gray-900">{b.name}</div>
+                      <div className="text-xs text-gray-500">{b.category}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  <div className="font-medium">{p.category?.name}</div>
-                  <div className="text-xs text-gray-400">{p.subcategory?.name}</div>
+                <td className="px-6 py-4 text-sm">
+                  <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    b.size === 'small' ? 'bg-blue-100 text-blue-800' :
+                    b.size === 'medium' ? 'bg-purple-100 text-purple-800' :
+                    'bg-amber-100 text-amber-800'
+                  }`}>
+                    {b.size?.charAt(0).toUpperCase() + b.size?.slice(1)}
+                  </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  <div className="font-semibold">₹{p.price}</div>
-                  {p.originalPrice && p.originalPrice > p.price && (
-                    <div className="text-xs text-gray-500 line-through">₹{p.originalPrice}</div>
-                  )}
+                  <div className="font-semibold">₹{b.price}</div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  {b.maxItems} items
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center space-x-1">
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium text-gray-900">{p.rating || 0}</span>
-                    <span className="text-xs text-gray-500">({p.reviews || 0})</span>
+                    <span className="text-sm font-medium text-gray-900">{b.rating || 0}</span>
+                    <span className="text-xs text-gray-500">({b.reviews || 0})</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${p.inStock
+                  <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${b.inStock
                     ? 'bg-green-100 text-green-800 border border-green-200'
                     : 'bg-red-100 text-red-800 border border-red-200'
                     }`}>
-                    {p.inStock ? 'In Stock' : 'Out of Stock'}
+                    {b.inStock ? 'In Stock' : 'Out of Stock'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                   <button
-                    onClick={() => handleEdit(p)}
+                    onClick={() => handleEdit(b)}
                     className="text-rose-600 hover:text-rose-800 p-1 rounded transition-colors"
-                    title="Edit product"
+                    title="Edit basket"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(p._id)}
+                    onClick={() => handleDelete(b._id)}
                     className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
-                    title="Delete product"
+                    title="Delete basket"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -551,10 +453,10 @@ const removeIngredient = (index) => {
               </tr>
             ))}
           </tbody>
-
         </table>
-
       </div>
+
+      {/* Bottom Pagination */}
       <div className="flex justify-between items-center">
         <div className="text-sm text-gray-600">
           Page {currentPage} of {totalPages}
@@ -590,18 +492,19 @@ const removeIngredient = (index) => {
           </button>
         </div>
       </div>
+
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-semibold mb-6 text-gray-900">
-              {editingProduct ? 'Edit Product' : 'Add New Product'}
+              {editingBasket ? 'Edit Basket' : 'Add New Basket'}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Image Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Product Image</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Basket Image</label>
                 <div
                   className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${dragActive
                     ? 'border-rose-500 bg-rose-50'
@@ -643,7 +546,7 @@ const removeIngredient = (index) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-3" onClick={() => document.getElementById('image-upload').click()}>
+                    <div className="space-y-3" onClick={() => document.getElementById('basket-image-upload').click()}>
                       <Upload className="w-12 h-12 text-gray-400 mx-auto" />
                       <div className="space-y-1">
                         <p className="text-sm text-gray-600">
@@ -659,9 +562,8 @@ const removeIngredient = (index) => {
                         accept="image/*"
                         onChange={(e) => handleImageChange(e.target.files[0])}
                         className="hidden"
-                        id="image-upload"
+                        id="basket-image-upload"
                       />
-                      <label htmlFor="image-upload" className="cursor-pointer" />
                     </div>
                   )}
                 </div>
@@ -670,45 +572,59 @@ const removeIngredient = (index) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Name */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Basket Name *</label>
                   <input
                     type="text"
                     required
-                    placeholder="Enter product name"
+                    placeholder="Enter basket name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   />
                 </div>
 
-                {/* Category */}
+                {/* Description */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <textarea
+                    placeholder="Enter basket description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows="3"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  />
+                </div>
+
+                {/* Size */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Size *</label>
                   <select
                     required
-                    value={formData.category}
-                    onChange={handleCategoryChange}
+                    value={formData.size}
+                    onChange={(e) => setFormData({ ...formData, size: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat._id} value={cat._id}>{cat.name}</option>
+                    {sizeOptions.map(size => (
+                      <option key={size} value={size}>
+                        {size.charAt(0).toUpperCase() + size.slice(1)}
+                      </option>
                     ))}
                   </select>
                 </div>
 
-                {/* Subcategory */}
+                {/* Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <select
-                    required
-                    value={formData.subcategory}
-                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   >
-                    <option value="">Select Subcategory</option>
-                    {subcategories.map(sub => (
-                      <option key={sub._id} value={sub._id}>{sub.name}</option>
+                    <option value="">Select Category</option>
+                    {categoryOptions.map(cat => (
+                      <option key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -728,21 +644,33 @@ const removeIngredient = (index) => {
                   />
                 </div>
 
-                {/* Original Price */}
+                {/* Max Items */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Original Price (₹)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Max Items *</label>
                   <input
                     type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    value={formData.originalPrice}
-                    onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
+                    required
+                    min="1"
+                    placeholder="Number of items"
+                    value={formData.maxItems}
+                    onChange={(e) => setFormData({ ...formData, maxItems: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   />
                 </div>
 
-                {/* Rating & Reviews */}
+                {/* Dimensions */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Dimensions</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 12x10x8 inches"
+                    value={formData.dimensions}
+                    onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  />
+                </div>
+
+                {/* Rating */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
                   <input
@@ -757,6 +685,7 @@ const removeIngredient = (index) => {
                   />
                 </div>
 
+                {/* Reviews */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Reviews</label>
                   <input
@@ -770,21 +699,21 @@ const removeIngredient = (index) => {
                 </div>
               </div>
 
-              {/* Ingredients */}
+              {/* Features */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Ingredients</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Features</label>
                 <div className="flex space-x-2 mb-3">
                   <input
                     type="text"
-                    placeholder="Add an ingredient"
-                    value={newIngredient}
-                    onChange={(e) => setNewIngredient(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addIngredient())}
+                    placeholder="Add a feature"
+                    value={newFeature}
+                    onChange={(e) => setNewFeature(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   />
                   <button
                     type="button"
-                    onClick={addIngredient}
+                    onClick={addFeature}
                     className="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 transition-colors flex items-center space-x-1"
                   >
                     <Plus className="w-4 h-4" />
@@ -792,12 +721,12 @@ const removeIngredient = (index) => {
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {formData.ingredients.map((ingredient, index) => (
+                  {formData.features.map((feature, index) => (
                     <span key={index} className="inline-flex items-center px-3 py-1 bg-rose-50 text-rose-700 rounded-full text-sm border border-rose-200">
-                      {ingredient}
+                      {feature}
                       <button
                         type="button"
-                        onClick={() => removeIngredient(index)}
+                        onClick={() => removeFeature(index)}
                         className="ml-2 text-rose-500 hover:text-rose-700 transition-colors"
                       >
                         <X className="w-3 h-3" />
@@ -807,7 +736,7 @@ const removeIngredient = (index) => {
                 </div>
               </div>
 
-              {/* Toggles */}
+              {/* In Stock Toggle */}
               <div className="flex space-x-6">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <div className="relative">
@@ -823,22 +752,6 @@ const removeIngredient = (index) => {
                       }`} />
                   </div>
                   <span className="text-sm font-medium text-gray-700">In Stock</span>
-                </label>
-
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      checked={formData.featured}
-                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                      className="sr-only"
-                    />
-                    <div className={`w-12 h-6 rounded-full transition-colors ${formData.featured ? 'bg-rose-500' : 'bg-gray-300'
-                      }`} />
-                    <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${formData.featured ? 'transform translate-x-6' : ''
-                      }`} />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Featured Product</span>
                 </label>
               </div>
 
@@ -856,15 +769,14 @@ const removeIngredient = (index) => {
                   disabled={submitLoading}
                   className="bg-rose-600 text-white px-6 py-2 rounded-lg hover:bg-rose-700 transition-colors flex items-center space-x-2"
                 >
-                  {submitLoading ?
-                    <>
-                      <span className="text-sm font-medium text-white">Submitting...</span>
-                    </> :
+                  {submitLoading ? (
+                    <span className="text-sm font-medium text-white">Submitting...</span>
+                  ) : (
                     <>
                       <Plus className="w-4 h-4" />
-                      <span className="text-sm font-medium text-white">{editingProduct ? 'Update' : 'Create'} Product</span>
-                    </>}
-
+                      <span className="text-sm font-medium text-white">{editingBasket ? 'Update' : 'Create'} Basket</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -875,4 +787,4 @@ const removeIngredient = (index) => {
   );
 };
 
-export default Products;
+export default Baskets;

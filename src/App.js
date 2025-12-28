@@ -21,6 +21,8 @@ import AdminLayout from './components/admin/AdminLayout';
 import Categories from './components/admin/Categories';
 import Subcategories from './components/admin/Subcategories';
 import Products from './components/admin/Products';
+import Baskets from './components/admin/Baskets';
+import Coupons from './components/admin/Coupons';
 import Orders from './components/admin/Orders';
 import Users from './components/admin/Users';
 import CustomizeBasket from './components/pages/CustomizeBasketPage';
@@ -71,6 +73,8 @@ function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="subcategories" element={<Subcategories />} />
             <Route path="products" element={<Products />} />
+            <Route path="baskets" element={<Baskets />} />
+            <Route path="coupons" element={<Coupons />} />
             <Route path="orders" element={<Orders />} />
             <Route path="users" element={<Users />} />
           </Route>

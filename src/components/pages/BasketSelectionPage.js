@@ -1,23 +1,47 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, Check, Star, ArrowRight, Filter, Search } from 'lucide-react';
+import { Gift, Check, Star, ArrowRight, Filter, Search, Loader2 } from 'lucide-react';
 import { AppContext } from '../../App';
-import { baskets } from '../data/baskets';
+import api from '../../api';
 
 export default function BasketSelectionPage() {
+    const [baskets, setBaskets] = useState([]);
     const [selectedBasket, setSelectedBasket] = useState(null);
-    const [filteredBaskets, setFilteredBaskets] = useState(baskets);
+    const [filteredBaskets, setFilteredBaskets] = useState([]);
     const [selectedSize, setSelectedSize] = useState('all');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [showFilters, setShowFilters] = useState(false);
-    
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const { setSelectedBasket: setContextBasket } = useContext(AppContext);
     const navigate = useNavigate();
 
+    // Fetch baskets from API
+    useEffect(() => {
+        const fetchBaskets = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const { data } = await api.get('/baskets');
+                const basketsData = data.baskets || data || [];
+                setBaskets(basketsData);
+                setFilteredBaskets(basketsData);
+            } catch (err) {
+                console.error('Error fetching baskets:', err);
+                setError('Failed to load baskets. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBaskets();
+    }, []);
+
     // Get unique sizes and categories for filters
-    const sizes = ['all', ...new Set(baskets.map(basket => basket.size))];
-    const categories = ['all', ...new Set(baskets.map(basket => basket.category))];
+    const sizes = ['all', ...new Set(baskets.map(basket => basket.size).filter(Boolean))];
+    const categories = ['all', ...new Set(baskets.map(basket => basket.category).filter(Boolean))];
 
 
     const filterBaskets = useCallback(() => {
@@ -36,13 +60,13 @@ export default function BasketSelectionPage() {
         // Filter by search term
         if (searchTerm) {
             filtered = filtered.filter(basket =>
-                basket.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                basket.description.toLowerCase().includes(searchTerm.toLowerCase())
+                basket.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                basket.description?.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
         setFilteredBaskets(filtered);
-    }, [selectedSize, selectedCategory, searchTerm]);
+    }, [baskets, selectedSize, selectedCategory, searchTerm]);
 
     const handleBasketSelect = (basket) => {
         setSelectedBasket(basket);
@@ -66,6 +90,37 @@ export default function BasketSelectionPage() {
         setSelectedCategory('all');
         setSearchTerm('');
     };
+
+    // Show loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 text-green-600 animate-spin mx-auto mb-4" />
+                    <p className="text-gray-600 text-lg">Loading hampers...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="text-6xl mb-4">😕</div>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-2">Oops! Something went wrong</h3>
+                    <p className="text-gray-600 mb-4">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12">
@@ -162,8 +217,8 @@ export default function BasketSelectionPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     {filteredBaskets.map((basket, index) => (
                         <div
-                            key={basket.id}
-                            className={`relative bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 ${selectedBasket?.id === basket.id
+                            key={basket._id || basket.id}
+                            className={`relative bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 ${(selectedBasket?._id || selectedBasket?.id) === (basket._id || basket.id)
                                     ? 'border-green-500 shadow-xl'
                                     : 'border-gray-200 hover:border-green-300'
                                 }`}
@@ -193,7 +248,7 @@ export default function BasketSelectionPage() {
                                         alt={basket.name}
                                         className="w-full h-full object-cover"
                                     />
-                                    {selectedBasket?.id === basket.id && (
+                                    {(selectedBasket?._id || selectedBasket?.id) === (basket._id || basket.id) && (
                                         <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-2">
                                             <Check className="w-4 h-4" />
                                         </div>
